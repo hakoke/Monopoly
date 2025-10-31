@@ -1525,6 +1525,40 @@ which is ${payment_ammount}
         </>
     ) : (
         <div className="lobby">
+            {server !== undefined && (
+                <div className="share-link-container">
+                    <div className="share-link-box">
+                        <p className="share-link-label">Invite friends</p>
+                        <div className="share-link-input-group">
+                            <input
+                                type="text"
+                                readOnly
+                                value={window.location.origin + (import.meta.env.BASE_URL || "/").replace(/\/$/, "") + `/game/${server.code}`}
+                                className="share-link-input"
+                                id="share-link-input"
+                            />
+                            <button
+                                className="copy-link-button"
+                                onClick={(e) => {
+                                    const input = document.getElementById("share-link-input") as HTMLInputElement;
+                                    input.select();
+                                    input.setSelectionRange(0, 99999);
+                                    navigator.clipboard.writeText(input.value);
+                                    const button = e.currentTarget as HTMLButtonElement;
+                                    const originalText = button.textContent;
+                                    button.textContent = "Copied!";
+                                    setTimeout(() => {
+                                        button.textContent = originalText;
+                                    }, 2000);
+                                }}
+                            >
+                                Copy
+                            </button>
+                        </div>
+                        <p className="share-link-code">Game Code: <strong>{server.code}</strong></p>
+                    </div>
+                </div>
+            )}
             <main>
                 <section>
                     <div>

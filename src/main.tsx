@@ -22,6 +22,10 @@ const getRoutes = () => {
                 element: <Home />,
             },
             {
+                path: "/game/:code",
+                element: <Home />,
+            },
+            {
                 path: "/gallery",
                 element: <Gallery />,
             },
@@ -40,6 +44,10 @@ const getRoutes = () => {
         return [
             {
                 path: base,
+                element: <Home />,
+            },
+            {
+                path: `${base}/game/:code`,
                 element: <Home />,
             },
             {

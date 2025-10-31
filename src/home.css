@@ -620,3 +620,171 @@ div.scoreboardIcon img:hover {
         height: 27px;
     }
 }
+
+/* Simple entry page styles */
+div.entry-simple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 400px;
+}
+
+div.entry-simple main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+h1.monopoly-title {
+    font-size: 48px;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+div.name-input-group {
+    width: 100%;
+}
+
+div.name-input-group input {
+    width: 100%;
+    font-size: 20px;
+    color: white;
+    background-color: rgba(30, 30, 30, 1);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+div.name-input-group input:focus {
+    outline: none;
+    border-color: #0075ff;
+}
+
+div.name-input-group input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+div.entry-simple button {
+    font-size: 22px;
+    font-weight: 600;
+    color: white;
+    background-color: #0075ff;
+    border: 0;
+    border-radius: 10px;
+    padding: 15px 50px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0, 0.6, 0.28, 1.47);
+    width: 100%;
+}
+
+div.entry-simple button:hover {
+    transform: scale(0.95);
+    background-color: #0056cc;
+}
+
+div.entry-simple button:active {
+    transform: scale(0.98);
+}
+
+div.entry-simple button:disabled {
+    opacity: 0.5;
+    cursor: wait;
+    transform: none;
+}
+
+/* Share link styles */
+.share-link-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.share-link-box {
+    background-color: rgba(30, 30, 30, 0.95);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    min-width: 320px;
+}
+
+.share-link-label {
+    color: white;
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.share-link-input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.share-link-input {
+    flex: 1;
+    font-size: 14px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    padding: 10px;
+    font-family: consolas, monospace;
+    cursor: text;
+}
+
+.share-link-input:focus {
+    outline: none;
+    border-color: #0075ff;
+}
+
+.copy-link-button {
+    font-size: 14px;
+    color: white;
+    background-color: #0075ff;
+    border: 0;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.copy-link-button:hover {
+    background-color: #0056cc;
+    transform: scale(0.95);
+}
+
+.copy-link-button:active {
+    transform: scale(0.98);
+}
+
+.share-link-code {
+    color: white;
+    margin: 0;
+    font-size: 12px;
+    text-align: center;
+    opacity: 0.7;
+}
+
+.share-link-code strong {
+    font-family: consolas, monospace;
+    font-size: 16px;
+    opacity: 1;
+    color: #0075ff;
+}
