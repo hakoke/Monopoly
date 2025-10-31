@@ -1,12 +1,16 @@
 :8080
 
 # Serve static files from docs directory
-# Railway/Railpack runs from /app, so docs is at /app/docs
 root * docs
 
-# Enable file server
-file_server
+# Handle all requests
+@notFiles {
+    not path *.js *.css *.png *.jpg *.jpeg *.gif *.svg *.ico *.woff *.woff2 *.ttf *.mp3 *.html
+}
 
-# Handle SPA routing - serve index.html for all routes
-try_files {path} {path}/ /index.html
+# Serve index.html for non-file routes (SPA routing)
+rewrite @notFiles /index.html
+
+# Enable file server for all other files
+file_server
 
