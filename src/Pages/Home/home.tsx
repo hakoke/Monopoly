@@ -18,6 +18,8 @@ export default function Home() {
     const { code: urlCode } = useParams<{ code?: string }>();
     const navigate = useNavigate();
     
+    console.log("Home component rendering, urlCode:", urlCode);
+    
     var cookie: MonopolyCookie;
     try {
         const getCookieString = CookieManager.get("monopolySettings");
