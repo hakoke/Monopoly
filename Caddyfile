@@ -1,10 +1,11 @@
 :8080
 
 # Serve static files from docs directory
-root * /app/docs
+# Railway/Railpack runs from /app, so docs is at /app/docs
+root * docs
 
 # Enable file server
-file_server browse
+file_server
 
 # Handle SPA routing - serve index.html for all routes
 try_files {path} {path}/ /index.html
