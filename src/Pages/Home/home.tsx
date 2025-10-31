@@ -5,6 +5,7 @@ import { Server, Socket, io } from "../../assets/sockets.ts";
 import NotifyElement, { NotificatorRef } from "../../components/notificator.tsx";
 import { MonopolyCookie, User } from "../../assets/types.ts";
 import { useParams, useNavigate } from "react-router-dom";
+import Dice3D from "../../components/Dice3D.tsx";
 
 // env
 // import { FirebaseApp, initializeApp } from "firebase/app";
@@ -17,8 +18,6 @@ import { CookieManager } from "../../assets/cookieManager.ts";
 export default function Home() {
     const { code: urlCode } = useParams<{ code?: string }>();
     const navigate = useNavigate();
-    
-    console.log("Home component rendering, urlCode:", urlCode);
     
     var cookie: MonopolyCookie;
     try {
@@ -226,224 +225,78 @@ export default function Home() {
     }
 
 
-    useEffect(() => {
-        console.log("Home render state:", {
-            socket: socket !== undefined,
-            isSignedIn,
-            urlCode,
-            name,
-            disabled
-        });
-        
-        // Debug: Check if elements exist in DOM
-        setTimeout(() => {
-            const entrySimple = document.querySelector('.entry-simple');
-            const title = document.querySelector('.monopoly-title');
-            const rootElement = document.getElementById('root');
-            
-            // Get computed styles
-            const entrySimpleStyles = entrySimple ? window.getComputedStyle(entrySimple as Element) : null;
-            const titleStyles = title ? window.getComputedStyle(title as Element) : null;
-            const rootStyles = rootElement ? window.getComputedStyle(rootElement) : null;
-            
-            // Log detailed information
-            console.log("=== DOM DEBUG INFO ===");
-            console.log("Root element exists:", !!rootElement);
-            if (rootElement) {
-                console.log("Root element:", rootElement);
-                console.log("Root element innerHTML length:", rootElement.innerHTML.length);
-                console.log("Root element children count:", rootElement.children.length);
-            }
-            
-            console.log("Entry-simple element exists:", !!entrySimple);
-            if (entrySimple) {
-                console.log("Entry-simple element:", entrySimple);
-                console.log("Entry-simple element visible:", entrySimple instanceof HTMLElement ? entrySimple.offsetWidth > 0 && entrySimple.offsetHeight > 0 : false);
-                console.log("Entry-simple offsetWidth:", entrySimple instanceof HTMLElement ? entrySimple.offsetWidth : 'N/A');
-                console.log("Entry-simple offsetHeight:", entrySimple instanceof HTMLElement ? entrySimple.offsetHeight : 'N/A');
-            }
-            
-            console.log("Title element exists:", !!title);
-            if (title) {
-                console.log("Title element:", title);
-                console.log("Title text content:", title.textContent);
-            }
-            
-            // Log all computed styles
-            if (entrySimpleStyles) {
-                console.log("=== Entry-Simple Computed Styles ===");
-                console.log("display:", entrySimpleStyles.display);
-                console.log("visibility:", entrySimpleStyles.visibility);
-                console.log("opacity:", entrySimpleStyles.opacity);
-                console.log("position:", entrySimpleStyles.position);
-                console.log("top:", entrySimpleStyles.top);
-                console.log("left:", entrySimpleStyles.left);
-                console.log("transform:", entrySimpleStyles.transform);
-                console.log("width:", entrySimpleStyles.width);
-                console.log("height:", entrySimpleStyles.height);
-                console.log("minWidth:", entrySimpleStyles.minWidth);
-                console.log("minHeight:", entrySimpleStyles.minHeight);
-                console.log("maxWidth:", entrySimpleStyles.maxWidth);
-                console.log("zIndex:", entrySimpleStyles.zIndex);
-                console.log("color:", entrySimpleStyles.color);
-                console.log("backgroundColor:", entrySimpleStyles.backgroundColor);
-            }
-            
-            if (titleStyles) {
-                console.log("=== Title Computed Styles ===");
-                console.log("display:", titleStyles.display);
-                console.log("visibility:", titleStyles.visibility);
-                console.log("opacity:", titleStyles.opacity);
-                console.log("fontSize:", titleStyles.fontSize);
-                console.log("color:", titleStyles.color);
-                console.log("position:", titleStyles.position);
-            }
-            
-            if (rootStyles) {
-                console.log("=== Root Element Computed Styles ===");
-                console.log("display:", rootStyles.display);
-                console.log("position:", rootStyles.position);
-                console.log("width:", rootStyles.width);
-                console.log("height:", rootStyles.height);
-                console.log("minHeight:", rootStyles.minHeight);
-                console.log("zIndex:", rootStyles.zIndex);
-            }
-            
-            // Check if CSS is loaded
-            const allStylesheets = Array.from(document.styleSheets);
-            console.log("=== Stylesheets ===");
-            console.log("Total stylesheets:", allStylesheets.length);
-            allStylesheets.forEach((sheet, index) => {
-                try {
-                    console.log(`Stylesheet ${index}:`, sheet.href || 'inline', 'rules:', sheet.cssRules?.length || 0);
-                } catch (e) {
-                    console.log(`Stylesheet ${index}: (cannot access)`, sheet.href || 'inline');
-                }
-            });
-            
-            console.log("=== End DOM Debug ===");
-        }, 100);
-    }, [socket, isSignedIn, urlCode, name, disabled]);
 
     return socket !== undefined && isSignedIn === true ? (
         <Monopoly socket={socket} name={name} server={server} />
     ) : (
         <>
             <NotifyElement ref={notifyRef} />
-            <div 
-                className="entry-simple"
-                style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translateX(-50%) translateY(-50%)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '30px',
-                    width: '100%',
-                    maxWidth: '400px',
-                    minHeight: 'auto',
-                    height: 'auto',
-                    zIndex: 1
-                }}
-            >
-                <main style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '20px',
-                    width: '100%',
-                    minHeight: 'auto',
-                    height: 'auto',
-                    flexShrink: 0
-                }}>
-                    <h1 
-                        className="monopoly-title"
-                        style={{
-                            fontSize: '48px',
-                            fontWeight: 700,
-                            color: 'white',
-                            margin: 0,
-                            textAlign: 'center',
-                            letterSpacing: '2px'
-                        }}
-                    >
-                        Monopoly
-                    </h1>
-                    <div className="name-input-group" style={{ width: '100%' }}>
-                        <input
-                            type="text"
-                            placeholder="Enter your name"
-                            value={name}
-                            onChange={(e) => SetName(e.currentTarget.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" && !disabled && name.replace(" ", "").length > 0) {
-                                    if (urlCode) {
-                                        joinButtonClicked();
-                                    } else {
-                                        createGame();
-                                    }
-                                }
-                            }}
-                            disabled={disabled}
-                            style={{
-                                width: '100%',
-                                fontSize: '20px',
-                                color: 'white',
-                                backgroundColor: 'rgba(30, 30, 30, 1)',
-                                border: '2px solid rgba(255, 255, 255, 0.1)',
-                                borderRadius: '10px',
-                                padding: '15px 20px',
-                                boxSizing: 'border-box'
-                            }}
-                        />
+            <div className="entry-page">
+                <div className="entry-background">
+                    <div className="gradient-orb orb-1"></div>
+                    <div className="gradient-orb orb-2"></div>
+                    <div className="gradient-orb orb-3"></div>
+                </div>
+                <div className="entry-container">
+                    <div className="entry-header">
+                        <Dice3D animated={true} value1={3} value2={4} />
+                        <h1 className="monopoly-title">
+                            <span className="title-main">MONOPOLY</span>
+                            <span className="title-subtitle">Multiplayer Edition</span>
+                        </h1>
                     </div>
-                    {urlCode ? (
-                        <>
-                            <p style={{ color: "white", margin: "10px 0", textAlign: "center" }}>
-                                Joining game: <strong>{urlCode}</strong>
-                            </p>
-                            <button 
-                                onClick={joinButtonClicked} 
-                                disabled={disabled}
-                                style={{
-                                    fontSize: '22px',
-                                    fontWeight: 600,
-                                    color: 'white',
-                                    backgroundColor: '#0075ff',
-                                    border: 0,
-                                    borderRadius: '10px',
-                                    padding: '15px 50px',
-                                    cursor: disabled ? 'wait' : 'pointer',
-                                    width: '100%',
-                                    opacity: disabled ? 0.5 : 1
+                    
+                    <div className="entry-form">
+                        <div className="input-wrapper">
+                            <label htmlFor="player-name" className="input-label">
+                                Player Name
+                            </label>
+                            <input
+                                id="player-name"
+                                type="text"
+                                placeholder="Enter your name"
+                                value={name}
+                                onChange={(e) => SetName(e.currentTarget.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && !disabled && name.replace(" ", "").length > 0) {
+                                        if (urlCode) {
+                                            joinButtonClicked();
+                                        } else {
+                                            createGame();
+                                        }
+                                    }
                                 }}
-                            >
-                                Join Game
-                            </button>
-                        </>
-                    ) : (
-                        <button 
-                            onClick={createGame} 
+                                disabled={disabled}
+                                className="player-input"
+                            />
+                        </div>
+
+                        {urlCode && (
+                            <div className="game-code-display">
+                                <span className="code-label">Joining Game:</span>
+                                <span className="code-value">{urlCode}</span>
+                            </div>
+                        )}
+
+                        <button
+                            onClick={urlCode ? joinButtonClicked : createGame}
                             disabled={disabled}
-                            style={{
-                                fontSize: '22px',
-                                fontWeight: 600,
-                                color: 'white',
-                                backgroundColor: '#0075ff',
-                                border: 0,
-                                borderRadius: '10px',
-                                padding: '15px 50px',
-                                cursor: disabled ? 'wait' : 'pointer',
-                                width: '100%',
-                                opacity: disabled ? 0.5 : 1
-                            }}
+                            className={`action-button ${disabled ? 'disabled' : ''}`}
                         >
-                            Create Game
+                            {disabled ? (
+                                <span className="button-content">
+                                    <span className="button-spinner"></span>
+                                    {urlCode ? 'Joining...' : 'Creating...'}
+                                </span>
+                            ) : (
+                                <span className="button-content">
+                                    {urlCode ? 'Join Game' : 'Create Game'}
+                                    <span className="button-arrow">→</span>
+                                </span>
+                            )}
                         </button>
-                    )}
-                </main>
+                    </div>
+                </div>
             </div>
         </>
     );

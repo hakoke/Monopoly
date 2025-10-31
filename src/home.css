@@ -723,6 +723,295 @@ div.entry-simple button:disabled {
     transform: none;
 }
 
+/* Production-level entry page styles */
+.entry-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.entry-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+.gradient-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: orbFloat 20s ease-in-out infinite;
+}
+
+.orb-1 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, #4169e1 0%, transparent 70%);
+    top: -100px;
+    left: -100px;
+    animation-delay: 0s;
+}
+
+.orb-2 {
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, #50c878 0%, transparent 70%);
+    bottom: -50px;
+    right: -50px;
+    animation-delay: 5s;
+}
+
+.orb-3 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, #ffc000 0%, transparent 70%);
+    top: 50%;
+    right: 10%;
+    animation-delay: 10s;
+}
+
+@keyframes orbFloat {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    33% {
+        transform: translate(50px, 50px) scale(1.1);
+    }
+    66% {
+        transform: translate(-30px, 30px) scale(0.9);
+    }
+}
+
+.entry-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 480px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+}
+
+.entry-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+}
+
+.monopoly-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.title-main {
+    font-size: 56px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 4px;
+    text-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+    text-align: center;
+}
+
+.title-subtitle {
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.entry-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.input-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.player-input {
+    width: 100%;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-sizing: border-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+
+.player-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.player-input:focus {
+    border-color: #4169e1;
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 4px rgba(65, 105, 225, 0.1);
+}
+
+.player-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.game-code-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(65, 105, 225, 0.15);
+    border: 1px solid rgba(65, 105, 225, 0.3);
+    border-radius: 12px;
+}
+
+.code-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.code-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #4169e1;
+    letter-spacing: 2px;
+    font-family: 'Courier New', monospace;
+}
+
+.action-button {
+    width: 100%;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, #4169e1 0%, #5a82f5 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 18px 32px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 4px 16px rgba(65, 105, 225, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.action-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.action-button:hover:not(.disabled)::before {
+    left: 100%;
+}
+
+.action-button:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 24px rgba(65, 105, 225, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, #5a82f5 0%, #6b95ff 100%);
+}
+
+.action-button:active:not(.disabled) {
+    transform: translateY(0);
+}
+
+.action-button.disabled {
+    opacity: 0.6;
+    cursor: wait;
+    background: linear-gradient(135deg, #4169e1 0%, #5a82f5 100%);
+}
+
+.button-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+.button-arrow {
+    font-size: 20px;
+    transition: transform 0.3s ease;
+}
+
+.action-button:hover:not(.disabled) .button-arrow {
+    transform: translateX(4px);
+}
+
+.button-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 /* Share link styles */
 .share-link-container {
     position: fixed;
