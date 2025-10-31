@@ -34,7 +34,6 @@ export default function Dice3D({ value1 = 3, value2 = 4, animated = true }: Dice
     }, [animated]);
 
     const renderDiceFace = (value: number) => {
-        const dots = [];
         const positions: { [key: number]: number[][] } = {
             1: [[0, 0]],
             2: [[-1, -1], [1, 1]],
