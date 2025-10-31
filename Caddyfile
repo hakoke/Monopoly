@@ -3,9 +3,16 @@
 # Serve static files from docs directory
 root * docs
 
+# Handle SPA routing - rewrite non-existent paths to index.html
+@notFound {
+    file {
+        not path */
+        try_files {path} /index.html
+    }
+}
+
+rewrite @notFound /index.html
+
 # Enable file server
 file_server
-
-# Serve index.html for all routes (SPA routing)
-try_files {path} /index.html
 
