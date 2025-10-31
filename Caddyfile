@@ -2,12 +2,4 @@
 
 root * /app/docs
 
-@notFound {
-    file {
-        not path *.js *.css *.png *.jpg *.jpeg *.gif *.svg *.ico *.woff *.woff2 *.ttf *.mp3 *.html *.json
-    }
-}
-
-rewrite @notFound /index.html
-
 file_server
