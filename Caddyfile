@@ -7,14 +7,25 @@
 	root * /app/docs
 	encode gzip
 	
-	# Rewrite requests that don't match static files to index.html for SPA routing
-	@spaRoutes {
-		not {
-			path_regexp \.(html|css|js|json|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|mp3|mp4|webm|pdf)$
-		}
+	# Log all requests for debugging
+	log {
+		output stdout
+		format console
+		level INFO
 	}
-	rewrite @spaRoutes /index.html
 	
-	file_server
+	# Serve static files directly
+	@staticFiles {
+		path_regexp \.(html|css|js|json|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|mp3|mp4|webm|pdf)$
+	}
+	handle @staticFiles {
+		file_server
+	}
+	
+	# For all other requests (SPA routes), serve index.html
+	handle {
+		rewrite * /index.html
+		file_server
+	}
 }
 
