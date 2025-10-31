@@ -1,5 +1,5 @@
 :8080
 
-root * docs
+root * /app/docs
 
 file_server
