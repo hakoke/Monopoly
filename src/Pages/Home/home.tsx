@@ -343,6 +343,8 @@ export default function Home() {
                     gap: '30px',
                     width: '100%',
                     maxWidth: '400px',
+                    minHeight: 'auto',
+                    height: 'auto',
                     zIndex: 1
                 }}
             >
@@ -351,7 +353,10 @@ export default function Home() {
                     flexDirection: 'column',
                     alignItems: 'center',
                     gap: '20px',
-                    width: '100%'
+                    width: '100%',
+                    minHeight: 'auto',
+                    height: 'auto',
+                    flexShrink: 0
                 }}>
                     <h1 
                         className="monopoly-title"
