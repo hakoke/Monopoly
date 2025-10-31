@@ -11,5 +11,7 @@ export default defineConfig({
     server: {
         https: true,
     },
-    base: "/Monopoly/",
+    // Use /Monopoly/ for GitHub Pages, / for Railway/Root deployments
+    // Set VITE_BASE_PATH="/Monopoly/" environment variable for GitHub Pages
+    base: process.env.VITE_BASE_PATH || "/",
 });

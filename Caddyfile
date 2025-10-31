@@ -1,0 +1,15 @@
+:8080
+
+# Serve static files from docs directory
+root * docs
+
+# Enable file server
+file_server
+
+# Set proper MIME types
+header Content-Type text/javascript "*.js"
+header Content-Type text/css "*.css"
+
+# Handle SPA routing - serve index.html for all routes
+try_files {path} /index.html
+
