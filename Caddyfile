@@ -5,7 +5,16 @@
 
 :{$PORT:3000} {
 	root * /app/docs
+	encode gzip
+	
+	# Rewrite requests that don't match static files to index.html for SPA routing
+	@spaRoutes {
+		not {
+			path_regexp \.(html|css|js|json|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|mp3|mp4|webm|pdf)$
+		}
+	}
+	rewrite @spaRoutes /index.html
+	
 	file_server
-	try_files {path} /index.html
 }
 
