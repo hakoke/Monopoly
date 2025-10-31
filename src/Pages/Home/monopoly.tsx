@@ -31,7 +31,6 @@ function App({ socket, name, server }: { socket: Socket; name: string; server: S
     const [currentId, SetCurrent] = useState<string>("");
     const [gameStarted, SetGameStarted] = useState<boolean>(false);
     const [gameStartedDisplay, SetGameStartedDisplay] = useState<boolean>(false);
-    const [imReady, SetReady] = useState<boolean>(false);
     const [selectedMode, SetMode] = useState<MonopolyMode>(MonopolyModes[0]);
     const [globalSettings, SetSettings] = useState<MonopolySettings>();
     const [mainTheme, SetTheme] = useState(new Audio("./main-theme.mp3"));
