@@ -226,15 +226,70 @@ export default function Home() {
     }
 
 
+    useEffect(() => {
+        console.log("Home render state:", {
+            socket: socket !== undefined,
+            isSignedIn,
+            urlCode,
+            name,
+            disabled
+        });
+        
+        // Debug: Check if elements exist in DOM
+        setTimeout(() => {
+            const entrySimple = document.querySelector('.entry-simple');
+            const title = document.querySelector('.monopoly-title');
+            console.log("DOM elements:", {
+                entrySimple: !!entrySimple,
+                title: !!title,
+                entrySimpleStyles: entrySimple ? window.getComputedStyle(entrySimple as Element) : null,
+                rootElement: document.getElementById('root')
+            });
+        }, 100);
+    }, [socket, isSignedIn, urlCode, name, disabled]);
+
     return socket !== undefined && isSignedIn === true ? (
         <Monopoly socket={socket} name={name} server={server} />
     ) : (
         <>
             <NotifyElement ref={notifyRef} />
-            <div className="entry-simple">
-                <main>
-                    <h1 className="monopoly-title">Monopoly</h1>
-                    <div className="name-input-group">
+            <div 
+                className="entry-simple"
+                style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translateX(-50%) translateY(-50%)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '30px',
+                    width: '100%',
+                    maxWidth: '400px',
+                    zIndex: 1
+                }}
+            >
+                <main style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '20px',
+                    width: '100%'
+                }}>
+                    <h1 
+                        className="monopoly-title"
+                        style={{
+                            fontSize: '48px',
+                            fontWeight: 700,
+                            color: 'white',
+                            margin: 0,
+                            textAlign: 'center',
+                            letterSpacing: '2px'
+                        }}
+                    >
+                        Monopoly
+                    </h1>
+                    <div className="name-input-group" style={{ width: '100%' }}>
                         <input
                             type="text"
                             placeholder="Enter your name"
@@ -250,19 +305,59 @@ export default function Home() {
                                 }
                             }}
                             disabled={disabled}
+                            style={{
+                                width: '100%',
+                                fontSize: '20px',
+                                color: 'white',
+                                backgroundColor: 'rgba(30, 30, 30, 1)',
+                                border: '2px solid rgba(255, 255, 255, 0.1)',
+                                borderRadius: '10px',
+                                padding: '15px 20px',
+                                boxSizing: 'border-box'
+                            }}
                         />
-                            </div>
+                    </div>
                     {urlCode ? (
                         <>
                             <p style={{ color: "white", margin: "10px 0", textAlign: "center" }}>
                                 Joining game: <strong>{urlCode}</strong>
                             </p>
-                            <button onClick={joinButtonClicked} disabled={disabled}>
+                            <button 
+                                onClick={joinButtonClicked} 
+                                disabled={disabled}
+                                style={{
+                                    fontSize: '22px',
+                                    fontWeight: 600,
+                                    color: 'white',
+                                    backgroundColor: '#0075ff',
+                                    border: 0,
+                                    borderRadius: '10px',
+                                    padding: '15px 50px',
+                                    cursor: disabled ? 'wait' : 'pointer',
+                                    width: '100%',
+                                    opacity: disabled ? 0.5 : 1
+                                }}
+                            >
                                 Join Game
-                                        </button>
+                            </button>
                         </>
                     ) : (
-                        <button onClick={createGame} disabled={disabled}>
+                        <button 
+                            onClick={createGame} 
+                            disabled={disabled}
+                            style={{
+                                fontSize: '22px',
+                                fontWeight: 600,
+                                color: 'white',
+                                backgroundColor: '#0075ff',
+                                border: 0,
+                                borderRadius: '10px',
+                                padding: '15px 50px',
+                                cursor: disabled ? 'wait' : 'pointer',
+                                width: '100%',
+                                opacity: disabled ? 0.5 : 1
+                            }}
+                        >
                             Create Game
                         </button>
                     )}
