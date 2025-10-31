@@ -14,13 +14,18 @@
 		level INFO
 	}
 	
-	# Rewrite /Monopoly/assets/* requests to /assets/* (handles mismatched base paths)
+	# Rewrite /Monopoly/assets/* requests to /assets/* (handles mismatched base paths from GitHub Pages builds)
 	handle /Monopoly/assets/* {
 		rewrite * /assets{path}
 		file_server
 	}
 	
-	# Serve all static files directly
+	# Rewrite /Monopoly/ requests to root (if HTML was built with /Monopoly/ base)
+	handle /Monopoly {
+		redir * / permanent
+	}
+	
+	# Serve all static files directly (assets, fonts, images, etc.)
 	@staticFiles {
 		path_regexp \.(html|css|js|json|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|mp3|mp4|webm|pdf)$
 	}
@@ -28,9 +33,9 @@
 		file_server
 	}
 	
-	# For root and all SPA routes, serve index.html or /Monopoly/index.html
+	# For all other routes (SPA routing), serve index.html
 	handle {
-		try_files /index.html /Monopoly/index.html
+		try_files {path} /index.html
 		file_server
 	}
 }
