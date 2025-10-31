@@ -1,0 +1,11 @@
+{
+	auto_https off
+	admin off
+}
+
+:{$PORT:3000} {
+	root * /app/docs
+	file_server
+	try_files {path} /index.html
+}
+
