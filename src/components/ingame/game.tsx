@@ -64,8 +64,7 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
     const [sended, SetSended] = useState<boolean>(false);
     const [showStreet, ShowStreet] = useState<boolean>(false);
     const [advnacedStreet, SetAdvancedStreet] = useState<boolean>(false);
-    const [rotation, SetRotation] = useState<number>(0);
-    const [scale, SetScale] = useState<number>(1);
+    const [boardScale, SetBoardScale] = useState<number>(1);
     const [settings, SetSettings] = useState<MonopolySettings>();
     const [timer, SetTimer] = useState<number>(0);
     useEffect(() => {
@@ -475,15 +474,33 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
         },
     }));
 
+    // Calculate responsive board scale based on viewport
     useEffect(() => {
-        // Rotation and Scale with mouse
-        (document.getElementById("locations") as HTMLDivElement).onwheel = (e) => {
-            if (e.shiftKey) {
-                SetScale((old) => old + (e.deltaY * (settings !== undefined ? settings.accessibility[1] : 5)) / 5000);
-            } else {
-                SetRotation((old) => old + (e.deltaY * (settings !== undefined ? settings.accessibility[0] : 45)) / 100);
-            }
+        const calculateScale = () => {
+            const boardSize = 900; // Fixed board size in CSS
+            const navWidth = 400; // Nav width from CSS
+            const availableWidth = window.innerWidth - navWidth;
+            const availableHeight = window.innerHeight;
+            
+            // Scale to fit both width and height, with some padding
+            const scaleX = availableWidth / boardSize;
+            const scaleY = availableHeight / boardSize;
+            
+            // Use the smaller scale to ensure board fits
+            const scale = Math.min(scaleX, scaleY, 1) * 0.95; // 5% padding
+            
+            SetBoardScale(scale);
         };
+        
+        calculateScale();
+        window.addEventListener('resize', calculateScale);
+        
+        return () => {
+            window.removeEventListener('resize', calculateScale);
+        };
+    }, []);
+
+    useEffect(() => {
         // Clicking Street
         const safe = Array.from(propretyMap.values()).filter((v) => v.group != "Special");
         for (const x of safe) {
@@ -518,7 +535,6 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
                 const elementSearch = document.querySelector(`div.player[player-id="${x.id}"]`);
                 if (elementSearch !== null) {
                     const _img = elementSearch.querySelector("div") as HTMLDivElement;
-                    _img.style.rotate = `${-rotation}deg`;
                     _img.style.aspectRatio = "1";
                     if (settings !== undefined && settings.accessibility[4] === true) {
                         _img.setAttribute("data-tooltip-color", x.color);
@@ -680,7 +696,7 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
         return () => {
             continue_to_animate = false;
         };
-    }, [prop.players, rotation]);
+    }, [prop.players]);
 
     useEffect(() => {
         const rollElement = document.querySelector(`button[data-button-type="roll"]`) as HTMLButtonElement;
@@ -728,7 +744,7 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
                     <div
                         className="board"
                         style={{
-                            transform: `translateX(-50%) translateY(-50%) rotate(${rotation}deg) scale(${scale})`,
+                            transform: `translateX(-50%) translateY(-50%) scale(${boardScale})`,
                         }}
                         id="locations"
                     >
