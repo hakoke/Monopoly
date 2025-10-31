@@ -327,16 +327,30 @@ export async function main(playersCount: number, f?: (host: string, Server: Serv
                     server.logFunction(e);
                 }
             });
-            socket.on("ready", (args: { ready?: boolean; mode?: MonopolyMode }) => {
+            socket.on("ready", (args: { ready?: boolean; mode?: MonopolyMode; forceStart?: boolean }) => {
                 try {
                     const client = Clients.get(socket.id);
                     if (client === undefined) return;
+                    
+                    // Check if this is the host (first player)
+                    const isHost = Array.from(Clients.keys())[0] === socket.id;
+                    
                     if (args.ready !== undefined) {
                         client.ready = args.ready;
                     }
                     if (args.mode !== undefined) {
                         selectedMode = args.mode;
                     }
+                    
+                    // If host wants to force start, make all players ready
+                    if (args.forceStart && isHost && Clients.size >= 2) {
+                        for (const [id, c] of Clients.entries()) {
+                            c.ready = true;
+                            Clients.set(id, c);
+                        }
+                        server.logFunction(`Host force started the game`);
+                    }
+                    
                     Clients.set(socket.id, client);
 
                     // Check if everyone Ready!

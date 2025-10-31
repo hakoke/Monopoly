@@ -33,7 +33,7 @@ function App({ socket, name, server }: { socket: Socket; name: string; server: S
     const [gameStartedDisplay, SetGameStartedDisplay] = useState<boolean>(false);
     const [selectedMode, SetMode] = useState<MonopolyMode>(MonopolyModes[0]);
     const [globalSettings, SetSettings] = useState<MonopolySettings>();
-    const [mainTheme, SetTheme] = useState(new Audio("./main-theme.mp3"));
+    const [mainTheme, SetTheme] = useState(new Audio("/main-theme.mp3"));
     const [startTIme, SetStartTime] = useState<Date>(new Date());
     const [histories, SetHistories] = useState<Array<historyAction>>([]);
 
@@ -1642,18 +1642,12 @@ which is ${payment_ammount}
                                     className="start-game-button"
                                     disabled={gameStarted || Array.from(clients.values()).length < 2}
                                     onClick={() => {
-                                        // Emit start game event - trigger all players to be ready
+                                        // Force start: set mode and force all players ready
                                         socket.emit("ready", {
-                                            ready: true,
                                             mode: selectedMode,
+                                            ready: true,
+                                            forceStart: true
                                         });
-                                        // Force start the game
-                                        setTimeout(() => {
-                                            socket.emit("ready", {
-                                                ready: true,
-                                                mode: selectedMode,
-                                            });
-                                        }, 100);
                                     }}
                                 >
                                     <span className="start-icon">▶</span>
@@ -1671,10 +1665,10 @@ which is ${payment_ammount}
 
                     {/* Right Section - Game Settings */}
                     <div className="lobby-section lobby-settings-section">
-                    {server === undefined ? (
+                    {Array.from(clients.values()).length === 0 ? (
                             <div className="lobby-card lobby-waiting">
                                 <div className="waiting-spinner"></div>
-                                <p className="waiting-text">Host is configuring the game...</p>
+                                <p className="waiting-text">Connecting to game...</p>
                             </div>
                         ) : (
                             <>
@@ -1697,6 +1691,7 @@ which is ${payment_ammount}
                                                     value={maxPlayers}
                                                     onChange={(e) => setMaxPlayers(parseInt(e.target.value))}
                                                     disabled={!isCurrentPlayerHost}
+                                                    title={!isCurrentPlayerHost ? "Only host can change this setting" : ""}
                                                 >
                                                     <option value={2}>2 Players</option>
                                                     <option value={3}>3 Players</option>
@@ -1716,7 +1711,7 @@ which is ${payment_ammount}
                                                     <label className="setting-label">x2 Rent on Full-Set Properties</label>
                                                     <span className="setting-description">If a player owns a full property set, the base rent payment will be doubled</span>
                                                 </div>
-                                                <label className="switch">
+                                                <label className="switch" title={!isCurrentPlayerHost ? "Only host can change this setting" : ""}>
                                                     <input
                                                         type="checkbox"
                                                         checked={doubleRent}
@@ -1732,7 +1727,7 @@ which is ${payment_ammount}
                                                     <label className="setting-label">Vacation Cash</label>
                                                     <span className="setting-description">If a player lands on Vacation, all collected money from taxes and bank payments will be earned</span>
                                                 </div>
-                                                <label className="switch">
+                                                <label className="switch" title={!isCurrentPlayerHost ? "Only host can change this setting" : ""}>
                                                     <input
                                                         type="checkbox"
                                                         checked={vacationCash}
@@ -1748,7 +1743,7 @@ which is ${payment_ammount}
                                                     <label className="setting-label">Auction</label>
                                                     <span className="setting-description">If someone skips purchasing the property landed on, it will be sold to the highest bidder</span>
                                                 </div>
-                                                <label className="switch">
+                                                <label className="switch" title={!isCurrentPlayerHost ? "Only host can change this setting" : ""}>
                                                     <input
                                                         type="checkbox"
                                                         checked={auction}
@@ -1764,7 +1759,7 @@ which is ${payment_ammount}
                                                     <label className="setting-label">Don't Collect Rent While in Prison</label>
                                                     <span className="setting-description">Rent will not be collected when landing on properties whose owners are in prison</span>
                                                 </div>
-                                                <label className="switch">
+                                                <label className="switch" title={!isCurrentPlayerHost ? "Only host can change this setting" : ""}>
                                                     <input
                                                         type="checkbox"
                                                         checked={noRentInPrison}
@@ -1780,7 +1775,7 @@ which is ${payment_ammount}
                                                     <label className="setting-label">Mortgage</label>
                                                     <span className="setting-description">Mortgage properties to earn 50% of their cost, but you won't get paid rent when players land on them</span>
                                                 </div>
-                                                <label className="switch">
+                                                <label className="switch" title={!isCurrentPlayerHost ? "Only host can change this setting" : ""}>
                                                     <input
                                                         type="checkbox"
                                                         checked={mortgage}
@@ -1796,7 +1791,7 @@ which is ${payment_ammount}
                                                     <label className="setting-label">Even Build</label>
                                                     <span className="setting-description">Houses and hotels must be built up and sold off evenly within a property set</span>
                                                 </div>
-                                                <label className="switch">
+                                                <label className="switch" title={!isCurrentPlayerHost ? "Only host can change this setting" : ""}>
                                                     <input
                                                         type="checkbox"
                                                         checked={evenBuild}
@@ -1817,6 +1812,7 @@ which is ${payment_ammount}
                                                     value={startingCash}
                                                     onChange={(e) => setStartingCash(parseInt(e.target.value))}
                                                     disabled={!isCurrentPlayerHost}
+                                                    title={!isCurrentPlayerHost ? "Only host can change this setting" : ""}
                                                 >
                                                     <option value={500}>$500</option>
                                                     <option value={1000}>$1,000</option>
