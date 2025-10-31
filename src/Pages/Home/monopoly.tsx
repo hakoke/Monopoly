@@ -1524,172 +1524,245 @@ which is ${payment_ammount}
             </div>
         </>
     ) : (
-        <div className="lobby">
+        <div className="lobby-page">
+            <div className="lobby-background">
+                <div className="lobby-gradient-orb lobby-orb-1"></div>
+                <div className="lobby-gradient-orb lobby-orb-2"></div>
+                <div className="lobby-gradient-orb lobby-orb-3"></div>
+            </div>
+
             {server !== undefined && (
-                <div className="share-link-container">
-                    <div className="share-link-box">
-                        <p className="share-link-label">Invite friends</p>
-                        <div className="share-link-input-group">
-                            <input
-                                type="text"
-                                readOnly
-                                value={window.location.origin + (import.meta.env.BASE_URL || "/").replace(/\/$/, "") + `/game/${server.code}`}
-                                className="share-link-input"
-                                id="share-link-input"
-                            />
-                            <button
-                                className="copy-link-button"
-                                onClick={(e) => {
-                                    const input = document.getElementById("share-link-input") as HTMLInputElement;
-                                    input.select();
-                                    input.setSelectionRange(0, 99999);
-                                    navigator.clipboard.writeText(input.value);
-                                    const button = e.currentTarget as HTMLButtonElement;
-                                    const originalText = button.textContent;
-                                    button.textContent = "Copied!";
-                                    setTimeout(() => {
-                                        button.textContent = originalText;
-                                    }, 2000);
-                                }}
-                            >
-                                Copy
-                            </button>
+                <div className="invite-modal">
+                    <div className="invite-header">
+                        <h2 className="invite-title">Invite Friends</h2>
+                        <button 
+                            className="invite-close"
+                            onClick={() => {
+                                const modal = document.querySelector('.invite-modal');
+                                if (modal) modal.classList.toggle('invite-modal-hidden');
+                            }}
+                        >
+                            ×
+                        </button>
+                    </div>
+                    <div className="invite-content">
+                        <div className="invite-link-wrapper">
+                            <label className="invite-label">Share Link</label>
+                            <div className="invite-input-group">
+                                <input
+                                    type="text"
+                                    readOnly
+                                    value={window.location.origin + (import.meta.env.BASE_URL || "/").replace(/\/$/, "") + `/game/${server.code}`}
+                                    className="invite-link-input"
+                                    id="share-link-input"
+                                />
+                                <button
+                                    className="invite-copy-button"
+                                    onClick={(e) => {
+                                        const input = document.getElementById("share-link-input") as HTMLInputElement;
+                                        input.select();
+                                        input.setSelectionRange(0, 99999);
+                                        navigator.clipboard.writeText(input.value);
+                                        const button = e.currentTarget as HTMLButtonElement;
+                                        const originalText = button.textContent;
+                                        button.textContent = "Copied!";
+                                        button.classList.add('copied');
+                                        setTimeout(() => {
+                                            button.textContent = originalText;
+                                            button.classList.remove('copied');
+                                        }, 2000);
+                                    }}
+                                >
+                                    <span className="copy-icon">📋</span>
+                                    Copy
+                                </button>
+                            </div>
                         </div>
-                        <p className="share-link-code">Game Code: <strong>{server.code}</strong></p>
+                        <div className="game-code-badge">
+                            <span className="code-label">Game Code</span>
+                            <span className="code-value">{server.code}</span>
+                        </div>
                     </div>
                 </div>
             )}
-            <main>
-                <section>
-                    <div>
-                        <h3>Hello there {name}</h3>
-                        the players that are currently in the lobby are
-                        <div>
-                            {Array.from(clients.values()).map((v, i) => {
-                                return (
-                                    <p style={v.ready ? { backgroundColor: "#32a852" } : {}} className="lobby-players" key={i}>
-                                        {v.username}
-                                    </p>
-                                );
-                            })}
-                            <center>
-                                <button
-                                    disabled={gameStarted}
-                                    onClick={() => {
-                                        socket.emit("ready", {
-                                            ready: !imReady,
-                                        });
-                                        SetReady(!imReady);
-                                    }}
-                                >
-                                    {!imReady ? "Ready" : "Not Ready"}
-                                </button>
-                            </center>
-                        </div>
-                        <br />
-                    </div>
-                </section>
-                <div>
-                    {server === undefined ? (
-                        <>
-                            <p
-                                style={{
-                                    opacity: 0.5,
-                                    margin: 0,
-                                    textAlign: "center",
-                                    fontWeight: "100",
-                                }}
-                            >
-                                the server-admin is <br /> choosing the gamemode
-                            </p>
-                        </>
-                    ) : (
-                        <></>
-                    )}
 
-                    <div className="modes">
-                        <main>
-                            <h3>{selectedMode.Name}</h3>
-                            <table>
-                                <tr>
-                                    <td> Winning State:</td> <td>{selectedMode.WinningMode.toUpperCase()}</td>
-                                </tr>
-                                {/* <tr>
-                                    <td> Buying System:</td> <td>{selectedMode.BuyingSystem.toUpperCase()}</td>
-                                </tr> */}
-                                <tr>
-                                    <td>Trades: </td>
-                                    <td>{selectedMode.AllowDeals ? "ALLOWED" : "NOT-ALLOWED"}</td>
-                                </tr>
-                                <tr>
-                                    <td>Mortgage: </td>
-                                    <td>{selectedMode.mortageAllowed ? "ALLOWED" : "NOT-ALLOWED"}</td>
-                                </tr>
-                                <tr>
-                                    <td>Starting Cash: </td>
-                                    <td>{selectedMode.startingCash} M</td>
-                                </tr>
-                                <tr>
-                                    <td>Turn Timer: </td>
-                                    <td>
-                                        {selectedMode.turnTimer === undefined ||
-                                        (typeof selectedMode.turnTimer === "number" && selectedMode.turnTimer === 0)
-                                            ? "No Timer"
-                                            : JSON.stringify(selectedMode.turnTimer) + " Sec"}
-                                    </td>
-                                </tr>
-                            </table>
-                        </main>
-                        <div className="selecting-mde">
-                            {MonopolyModes.map((v, k) => {
-                                return (
-                                    <p
-                                        data-select={JSON.stringify(v) === JSON.stringify(selectedMode)}
-                                        key={k}
-                                        onClick={() => {
-                                            if (server !== undefined)
-                                                socket.emit("ready", {
-                                                    mode: v,
-                                                });
-                                        }}
-                                        data-disabled={server === undefined}
-                                    >
-                                        {v.Name}
-                                    </p>
-                                );
-                            })}
-                            <p
-                                data-select={selectedMode.Name === "Custom Mode"}
-                                data-disabled={server === undefined}
+            <div className="lobby-container">
+                <div className="lobby-layout">
+                    {/* Left Section - Players & Ready */}
+                    <div className="lobby-section lobby-players-section">
+                        <div className="lobby-card">
+                            <div className="lobby-header">
+                                <h2 className="lobby-greeting">
+                                    <span className="greeting-icon">👋</span>
+                                    Hello, <span className="player-name">{name}</span>
+                                </h2>
+                                <p className="lobby-subtitle">Players in Lobby</p>
+                            </div>
+                            
+                            <div className="players-list">
+                                {Array.from(clients.values()).map((v, i) => {
+                                    return (
+                                        <div 
+                                            key={i}
+                                            className={`player-card ${v.ready ? 'player-ready' : ''} ${v.id === socket.id ? 'player-self' : ''}`}
+                                        >
+                                            <div className="player-avatar">
+                                                {v.ready ? '✓' : ''}
+                                            </div>
+                                            <span className="player-name-text">{v.username}</span>
+                                            {v.ready && (
+                                                <span className="ready-badge">Ready</span>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            <button
+                                className={`ready-button ${imReady ? 'ready-active' : ''}`}
+                                disabled={gameStarted}
                                 onClick={() => {
-                                    const winstateChoice = window.prompt("Winning State\n1=last-standing\n2=monopols\n3=monopols & trains", "3");
-                                    // const buyingChoice = window.prompt("Buying System State\n1=following-order\n2=card-firsts\n3=everything", "3");
-                                    const allowTrade = window.confirm("Allow Trades");
-                                    const allowMortgage = window.confirm("Allow Mortgage");
-                                    const startingCash = window.prompt("Starting Cash", "1500");
-                                    const turnTimer = window.prompt("Turn Timer", "0");
-                                    const v = {
-                                        AllowDeals: allowTrade,
-                                        // BuyingSystem: buyingChoice === "2" ? "card-firsts" : buyingChoice === "3" ? "everything" : "following-order",
-                                        WinningMode:
-                                            winstateChoice === "2" ? "monopols" : winstateChoice === "3" ? "monopols & trains" : "last-standing",
-                                        Name: "Custom Mode",
-                                        mortageAllowed: allowMortgage,
-                                        startingCash: startingCash === null ? 1500 : parseInt(startingCash) ?? 1500,
-                                        turnTimer: turnTimer === null ? undefined : parseInt(turnTimer) ?? undefined,
-                                    } as MonopolyMode;
-                                    if (server !== undefined)
-                                        socket.emit("ready", {
-                                            mode: v,
-                                        });
+                                    socket.emit("ready", {
+                                        ready: !imReady,
+                                    });
+                                    SetReady(!imReady);
                                 }}
                             >
-                                Custom Mode
-                            </p>
+                                <span className="ready-icon">{imReady ? '✓' : '○'}</span>
+                                <span>{!imReady ? "I'm Ready" : "Not Ready"}</span>
+                            </button>
+
+                            {Array.from(clients.values()).every(v => v.ready) && Array.from(clients.values()).length > 1 && (
+                                <div className="all-ready-indicator">
+                                    <span className="ready-pulse">✨</span>
+                                    All players ready!
+                                </div>
+                            )}
                         </div>
+                    </div>
+
+                    {/* Right Section - Game Mode */}
+                    <div className="lobby-section lobby-mode-section">
+                        {server === undefined ? (
+                            <div className="lobby-card lobby-waiting">
+                                <div className="waiting-spinner"></div>
+                                <p className="waiting-text">Server admin is choosing the game mode...</p>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="lobby-card mode-details-card">
+                                    <div className="mode-header">
+                                        <h2 className="mode-title">{selectedMode.Name}</h2>
+                                        <span className="mode-badge">Active Mode</span>
+                                    </div>
+                                    
+                                    <div className="mode-settings">
+                                        <div className="setting-item">
+                                            <span className="setting-label">Winning State</span>
+                                            <span className="setting-value">{selectedMode.WinningMode.replace(/-/g, ' ').toUpperCase()}</span>
+                                        </div>
+                                        <div className="setting-item">
+                                            <span className="setting-label">Trades</span>
+                                            <span className={`setting-value ${selectedMode.AllowDeals ? 'setting-allowed' : 'setting-disabled'}`}>
+                                                {selectedMode.AllowDeals ? "ALLOWED" : "NOT ALLOWED"}
+                                            </span>
+                                        </div>
+                                        <div className="setting-item">
+                                            <span className="setting-label">Mortgage</span>
+                                            <span className={`setting-value ${selectedMode.mortageAllowed ? 'setting-allowed' : 'setting-disabled'}`}>
+                                                {selectedMode.mortageAllowed ? "ALLOWED" : "NOT ALLOWED"}
+                                            </span>
+                                        </div>
+                                        <div className="setting-item">
+                                            <span className="setting-label">Starting Cash</span>
+                                            <span className="setting-value setting-highlight">{selectedMode.startingCash} M</span>
+                                        </div>
+                                        <div className="setting-item">
+                                            <span className="setting-label">Turn Timer</span>
+                                            <span className="setting-value">
+                                                {selectedMode.turnTimer === undefined ||
+                                                (typeof selectedMode.turnTimer === "number" && selectedMode.turnTimer === 0)
+                                                    ? "No Timer"
+                                                    : selectedMode.turnTimer + " Sec"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="lobby-card mode-selection-card">
+                                    <h3 className="mode-selection-title">Select Game Mode</h3>
+                                    <div className="mode-grid">
+                                        {MonopolyModes.map((v, k) => {
+                                            const isSelected = JSON.stringify(v) === JSON.stringify(selectedMode);
+                                            return (
+                                                <button
+                                                    key={k}
+                                                    className={`mode-option ${isSelected ? 'mode-selected' : ''}`}
+                                                    onClick={() => {
+                                                        if (server !== undefined)
+                                                            socket.emit("ready", {
+                                                                mode: v,
+                                                            });
+                                                    }}
+                                                    disabled={server === undefined}
+                                                >
+                                                    <span className="mode-option-name">{v.Name}</span>
+                                                    {isSelected && (
+                                                        <span className="mode-check">✓</span>
+                                                    )}
+                                                </button>
+                                            );
+                                        })}
+                                        <button
+                                            className={`mode-option ${selectedMode.Name === "Custom Mode" ? 'mode-selected' : ''}`}
+                                            onClick={() => {
+                                                const winstateChoice = window.prompt("Winning State\n1=last-standing\n2=monopols\n3=monopols & trains", "3");
+                                                const allowTrade = window.confirm("Allow Trades");
+                                                const allowMortgage = window.confirm("Allow Mortgage");
+                                                const startingCash = window.prompt("Starting Cash", "1500");
+                                                const turnTimer = window.prompt("Turn Timer", "0");
+                                                const v = {
+                                                    AllowDeals: allowTrade,
+                                                    WinningMode:
+                                                        winstateChoice === "2" ? "monopols" : winstateChoice === "3" ? "monopols & trains" : "last-standing",
+                                                    Name: "Custom Mode",
+                                                    mortageAllowed: allowMortgage,
+                                                    startingCash: startingCash === null ? 1500 : parseInt(startingCash) ?? 1500,
+                                                    turnTimer: turnTimer === null ? undefined : parseInt(turnTimer) ?? undefined,
+                                                } as MonopolyMode;
+                                                if (server !== undefined)
+                                                    socket.emit("ready", {
+                                                        mode: v,
+                                                    });
+                                            }}
+                                            disabled={server === undefined}
+                                        >
+                                            <span className="mode-option-name">Custom Mode</span>
+                                            <span className="mode-option-icon">⚙️</span>
+                                            {selectedMode.Name === "Custom Mode" && (
+                                                <span className="mode-check">✓</span>
+                                            )}
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
-            </main>
+
+                {server !== undefined && (
+                    <button 
+                        className="invite-trigger-button"
+                        onClick={() => {
+                            const modal = document.querySelector('.invite-modal');
+                            if (modal) modal.classList.toggle('invite-modal-hidden');
+                        }}
+                    >
+                        <span className="invite-icon">🔗</span>
+                        Invite Friends
+                    </button>
+                )}
+            </div>
 
             <p id="floating-clock"></p>
         </div>
