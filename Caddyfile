@@ -14,18 +14,13 @@
 		level INFO
 	}
 	
-	# Redirect root to /Monopoly/ if files are in /Monopoly/ directory
-	handle / {
-		try_files {path} /Monopoly/index.html
+	# Rewrite /Monopoly/assets/* requests to /assets/* (handles mismatched base paths)
+	handle /Monopoly/assets/* {
+		rewrite * /assets{path}
 		file_server
 	}
 	
-	# Handle /Monopoly/ paths - serve files from /Monopoly/ directory
-	handle_path /Monopoly/* {
-		file_server
-	}
-	
-	# Serve static files directly
+	# Serve all static files directly
 	@staticFiles {
 		path_regexp \.(html|css|js|json|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|mp3|mp4|webm|pdf)$
 	}
@@ -33,9 +28,9 @@
 		file_server
 	}
 	
-	# For all other requests (SPA routes), serve index.html or /Monopoly/index.html
+	# For root and all SPA routes, serve index.html or /Monopoly/index.html
 	handle {
-		try_files {path} /Monopoly/index.html /index.html
+		try_files /index.html /Monopoly/index.html
 		file_server
 	}
 }

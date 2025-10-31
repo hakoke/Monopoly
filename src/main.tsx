@@ -67,7 +67,9 @@ const getRoutes = () => {
     }
 };
 
-const router = createBrowserRouter(getRoutes());
+const router = createBrowserRouter(getRoutes(), {
+    basename: basePath && basePath !== "/" ? basePath : undefined,
+});
 
 function App() {
     try {
