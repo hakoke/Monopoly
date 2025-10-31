@@ -12,6 +12,22 @@ function App({ socket, name, server }: { socket: Socket; name: string; server: S
     const [clients, SetClients] = useState<Map<string, Player>>(new Map());
     const players = Array.from(clients.values());
 
+    // Host is the person who created the server
+    const isHost = server !== undefined;
+    // Find host ID - first player in the clients map
+    const hostId = Array.from(clients.keys())[0] || socket.id;
+    const isCurrentPlayerHost = isHost && socket.id === hostId;
+    
+    // Game settings state
+    const [maxPlayers, setMaxPlayers] = useState(6);
+    const [startingCash, setStartingCash] = useState(1500);
+    const [doubleRent, setDoubleRent] = useState(true);
+    const [vacationCash, setVacationCash] = useState(false);
+    const [auction, setAuction] = useState(false);
+    const [noRentInPrison, setNoRentInPrison] = useState(true);
+    const [mortgage, setMortgage] = useState(true);
+    const [evenBuild, setEvenBuild] = useState(false);
+
     const [currentId, SetCurrent] = useState<string>("");
     const [gameStarted, SetGameStarted] = useState<boolean>(false);
     const [gameStartedDisplay, SetGameStartedDisplay] = useState<boolean>(false);
@@ -1531,15 +1547,16 @@ which is ${payment_ammount}
                 <div className="lobby-gradient-orb lobby-orb-3"></div>
             </div>
 
+            {/* Sidebar Invite Panel */}
             {server !== undefined && (
-                <div className="invite-modal">
+                <div className="invite-sidebar invite-sidebar-hidden">
                     <div className="invite-header">
-                        <h2 className="invite-title">Invite Friends</h2>
+                        <h3 className="invite-title">Invite Friends</h3>
                         <button 
                             className="invite-close"
                             onClick={() => {
-                                const modal = document.querySelector('.invite-modal');
-                                if (modal) modal.classList.toggle('invite-modal-hidden');
+                                const sidebar = document.querySelector('.invite-sidebar');
+                                if (sidebar) sidebar.classList.toggle('invite-sidebar-hidden');
                             }}
                         >
                             ×
@@ -1549,34 +1566,34 @@ which is ${payment_ammount}
                         <div className="invite-link-wrapper">
                             <label className="invite-label">Share Link</label>
                             <div className="invite-input-group">
-                                <input
-                                    type="text"
-                                    readOnly
-                                    value={window.location.origin + (import.meta.env.BASE_URL || "/").replace(/\/$/, "") + `/game/${server.code}`}
+                            <input
+                                type="text"
+                                readOnly
+                                value={window.location.origin + (import.meta.env.BASE_URL || "/").replace(/\/$/, "") + `/game/${server.code}`}
                                     className="invite-link-input"
-                                    id="share-link-input"
-                                />
-                                <button
+                                id="share-link-input"
+                            />
+                            <button
                                     className="invite-copy-button"
-                                    onClick={(e) => {
-                                        const input = document.getElementById("share-link-input") as HTMLInputElement;
-                                        input.select();
-                                        input.setSelectionRange(0, 99999);
-                                        navigator.clipboard.writeText(input.value);
-                                        const button = e.currentTarget as HTMLButtonElement;
-                                        const originalText = button.textContent;
-                                        button.textContent = "Copied!";
+                                onClick={(e) => {
+                                    const input = document.getElementById("share-link-input") as HTMLInputElement;
+                                    input.select();
+                                    input.setSelectionRange(0, 99999);
+                                    navigator.clipboard.writeText(input.value);
+                                    const button = e.currentTarget as HTMLButtonElement;
+                                    const originalText = button.textContent;
+                                    button.textContent = "Copied!";
                                         button.classList.add('copied');
-                                        setTimeout(() => {
-                                            button.textContent = originalText;
+                                    setTimeout(() => {
+                                        button.textContent = originalText;
                                             button.classList.remove('copied');
-                                        }, 2000);
-                                    }}
-                                >
+                                    }, 2000);
+                                }}
+                            >
                                     <span className="copy-icon">📋</span>
-                                    Copy
-                                </button>
-                            </div>
+                                Copy
+                            </button>
+                        </div>
                         </div>
                         <div className="game-code-badge">
                             <span className="code-label">Game Code</span>
@@ -1588,7 +1605,7 @@ which is ${payment_ammount}
 
             <div className="lobby-container">
                 <div className="lobby-layout">
-                    {/* Left Section - Players & Ready */}
+                    {/* Left Section - Players */}
                     <div className="lobby-section lobby-players-section">
                         <div className="lobby-card">
                             <div className="lobby-header">
@@ -1596,153 +1613,221 @@ which is ${payment_ammount}
                                     <span className="greeting-icon">👋</span>
                                     Hello, <span className="player-name">{name}</span>
                                 </h2>
-                                <p className="lobby-subtitle">Players in Lobby</p>
+                                <p className="lobby-subtitle">
+                                    {Array.from(clients.values()).length} / {maxPlayers} Players
+                                </p>
                             </div>
                             
                             <div className="players-list">
-                                {Array.from(clients.values()).map((v, i) => {
-                                    return (
+                            {Array.from(clients.values()).map((v, i) => {
+                                    const playerIsHost = v.id === hostId;
+                                return (
                                         <div 
                                             key={i}
-                                            className={`player-card ${v.ready ? 'player-ready' : ''} ${v.id === socket.id ? 'player-self' : ''}`}
+                                            className={`player-card ${v.id === socket.id ? 'player-self' : ''} ${playerIsHost ? 'player-host' : ''}`}
                                         >
                                             <div className="player-avatar">
-                                                {v.ready ? '✓' : ''}
+                                                {playerIsHost && <span className="crown-icon">👑</span>}
                                             </div>
                                             <span className="player-name-text">{v.username}</span>
-                                            {v.ready && (
-                                                <span className="ready-badge">Ready</span>
+                                            {playerIsHost && (
+                                                <span className="host-badge">Host</span>
                                             )}
                                         </div>
-                                    );
-                                })}
+                                );
+                            })}
                             </div>
 
-                            <button
-                                className={`ready-button ${imReady ? 'ready-active' : ''}`}
-                                disabled={gameStarted}
-                                onClick={() => {
-                                    socket.emit("ready", {
-                                        ready: !imReady,
-                                    });
-                                    SetReady(!imReady);
-                                }}
-                            >
-                                <span className="ready-icon">{imReady ? '✓' : '○'}</span>
-                                <span>{!imReady ? "I'm Ready" : "Not Ready"}</span>
-                            </button>
+                            {isCurrentPlayerHost && (
+                                <button
+                                    className="start-game-button"
+                                    disabled={gameStarted || Array.from(clients.values()).length < 2}
+                                    onClick={() => {
+                                        // Emit start game event - trigger all players to be ready
+                                        socket.emit("ready", {
+                                            ready: true,
+                                            mode: selectedMode,
+                                        });
+                                        // Force start the game
+                                        setTimeout(() => {
+                                            socket.emit("ready", {
+                                                ready: true,
+                                                mode: selectedMode,
+                                            });
+                                        }, 100);
+                                    }}
+                                >
+                                    <span className="start-icon">▶</span>
+                                    <span>Start Game</span>
+                                </button>
+                            )}
 
-                            {Array.from(clients.values()).every(v => v.ready) && Array.from(clients.values()).length > 1 && (
-                                <div className="all-ready-indicator">
-                                    <span className="ready-pulse">✨</span>
-                                    All players ready!
-                                </div>
+                            {isCurrentPlayerHost && (Array.from(clients.values()).length < 2) && (
+                                <p className="waiting-for-players">
+                                    Waiting for at least 2 players to start...
+                                </p>
                             )}
                         </div>
                     </div>
 
-                    {/* Right Section - Game Mode */}
-                    <div className="lobby-section lobby-mode-section">
-                        {server === undefined ? (
+                    {/* Right Section - Game Settings */}
+                    <div className="lobby-section lobby-settings-section">
+                    {server === undefined ? (
                             <div className="lobby-card lobby-waiting">
                                 <div className="waiting-spinner"></div>
-                                <p className="waiting-text">Server admin is choosing the game mode...</p>
+                                <p className="waiting-text">Host is configuring the game...</p>
                             </div>
                         ) : (
                             <>
-                                <div className="lobby-card mode-details-card">
-                                    <div className="mode-header">
-                                        <h2 className="mode-title">{selectedMode.Name}</h2>
-                                        <span className="mode-badge">Active Mode</span>
+                                <div className="lobby-card settings-card">
+                                    <div className="settings-header">
+                                        <h2 className="settings-title">Game Settings</h2>
                                     </div>
                                     
-                                    <div className="mode-settings">
-                                        <div className="setting-item">
-                                            <span className="setting-label">Winning State</span>
-                                            <span className="setting-value">{selectedMode.WinningMode.replace(/-/g, ' ').toUpperCase()}</span>
-                                        </div>
-                                        <div className="setting-item">
-                                            <span className="setting-label">Trades</span>
-                                            <span className={`setting-value ${selectedMode.AllowDeals ? 'setting-allowed' : 'setting-disabled'}`}>
-                                                {selectedMode.AllowDeals ? "ALLOWED" : "NOT ALLOWED"}
-                                            </span>
-                                        </div>
-                                        <div className="setting-item">
-                                            <span className="setting-label">Mortgage</span>
-                                            <span className={`setting-value ${selectedMode.mortageAllowed ? 'setting-allowed' : 'setting-disabled'}`}>
-                                                {selectedMode.mortageAllowed ? "ALLOWED" : "NOT ALLOWED"}
-                                            </span>
-                                        </div>
-                                        <div className="setting-item">
-                                            <span className="setting-label">Starting Cash</span>
-                                            <span className="setting-value setting-highlight">{selectedMode.startingCash} M</span>
-                                        </div>
-                                        <div className="setting-item">
-                                            <span className="setting-label">Turn Timer</span>
-                                            <span className="setting-value">
-                                                {selectedMode.turnTimer === undefined ||
-                                                (typeof selectedMode.turnTimer === "number" && selectedMode.turnTimer === 0)
-                                                    ? "No Timer"
-                                                    : selectedMode.turnTimer + " Sec"}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="lobby-card mode-selection-card">
-                                    <h3 className="mode-selection-title">Select Game Mode</h3>
-                                    <div className="mode-grid">
-                                        {MonopolyModes.map((v, k) => {
-                                            const isSelected = JSON.stringify(v) === JSON.stringify(selectedMode);
-                                            return (
-                                                <button
-                                                    key={k}
-                                                    className={`mode-option ${isSelected ? 'mode-selected' : ''}`}
-                                                    onClick={() => {
-                                                        if (server !== undefined)
-                                                            socket.emit("ready", {
-                                                                mode: v,
-                                                            });
-                                                    }}
-                                                    disabled={server === undefined}
+                                    <div className="settings-content">
+                                        {/* Maximum Players */}
+                                        <div className="setting-group">
+                                            <label className="setting-group-label">Game Settings</label>
+                                            <div className="setting-row">
+                                                <div className="setting-label-wrapper">
+                                                    <label className="setting-label">Maximum Players</label>
+                                                    <span className="setting-description">How many players can join the game</span>
+                                                </div>
+                                                <select
+                                                    className="setting-dropdown"
+                                                    value={maxPlayers}
+                                                    onChange={(e) => setMaxPlayers(parseInt(e.target.value))}
+                                                    disabled={!isCurrentPlayerHost}
                                                 >
-                                                    <span className="mode-option-name">{v.Name}</span>
-                                                    {isSelected && (
-                                                        <span className="mode-check">✓</span>
-                                                    )}
-                                                </button>
-                                            );
-                                        })}
-                                        <button
-                                            className={`mode-option ${selectedMode.Name === "Custom Mode" ? 'mode-selected' : ''}`}
-                                            onClick={() => {
-                                                const winstateChoice = window.prompt("Winning State\n1=last-standing\n2=monopols\n3=monopols & trains", "3");
-                                                const allowTrade = window.confirm("Allow Trades");
-                                                const allowMortgage = window.confirm("Allow Mortgage");
-                                                const startingCash = window.prompt("Starting Cash", "1500");
-                                                const turnTimer = window.prompt("Turn Timer", "0");
-                                                const v = {
-                                                    AllowDeals: allowTrade,
-                                                    WinningMode:
-                                                        winstateChoice === "2" ? "monopols" : winstateChoice === "3" ? "monopols & trains" : "last-standing",
-                                                    Name: "Custom Mode",
-                                                    mortageAllowed: allowMortgage,
-                                                    startingCash: startingCash === null ? 1500 : parseInt(startingCash) ?? 1500,
-                                                    turnTimer: turnTimer === null ? undefined : parseInt(turnTimer) ?? undefined,
-                                                } as MonopolyMode;
-                                                if (server !== undefined)
-                                                    socket.emit("ready", {
-                                                        mode: v,
-                                                    });
-                                            }}
-                                            disabled={server === undefined}
-                                        >
-                                            <span className="mode-option-name">Custom Mode</span>
-                                            <span className="mode-option-icon">⚙️</span>
-                                            {selectedMode.Name === "Custom Mode" && (
-                                                <span className="mode-check">✓</span>
-                                            )}
-                                        </button>
+                                                    <option value={2}>2 Players</option>
+                                                    <option value={3}>3 Players</option>
+                                                    <option value={4}>4 Players</option>
+                                                    <option value={5}>5 Players</option>
+                                                    <option value={6}>6 Players</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        {/* Gameplay Rules */}
+                                        <div className="setting-group">
+                                            <label className="setting-group-label">Gameplay Rules</label>
+                                            
+                                            <div className="setting-row switch-row">
+                                                <div className="setting-label-wrapper">
+                                                    <label className="setting-label">x2 Rent on Full-Set Properties</label>
+                                                    <span className="setting-description">If a player owns a full property set, the base rent payment will be doubled</span>
+                                                </div>
+                                                <label className="switch">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={doubleRent}
+                                                        onChange={(e) => setDoubleRent(e.target.checked)}
+                                                        disabled={!isCurrentPlayerHost}
+                                                    />
+                                                    <span className="slider"></span>
+                                                </label>
+                                            </div>
+
+                                            <div className="setting-row switch-row">
+                                                <div className="setting-label-wrapper">
+                                                    <label className="setting-label">Vacation Cash</label>
+                                                    <span className="setting-description">If a player lands on Vacation, all collected money from taxes and bank payments will be earned</span>
+                                                </div>
+                                                <label className="switch">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={vacationCash}
+                                                        onChange={(e) => setVacationCash(e.target.checked)}
+                                                        disabled={!isCurrentPlayerHost}
+                                                    />
+                                                    <span className="slider"></span>
+                                                </label>
+                                            </div>
+
+                                            <div className="setting-row switch-row">
+                                                <div className="setting-label-wrapper">
+                                                    <label className="setting-label">Auction</label>
+                                                    <span className="setting-description">If someone skips purchasing the property landed on, it will be sold to the highest bidder</span>
+                                                </div>
+                                                <label className="switch">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={auction}
+                                                        onChange={(e) => setAuction(e.target.checked)}
+                                                        disabled={!isCurrentPlayerHost}
+                                                    />
+                                                    <span className="slider"></span>
+                                                </label>
+                                            </div>
+
+                                            <div className="setting-row switch-row">
+                                                <div className="setting-label-wrapper">
+                                                    <label className="setting-label">Don't Collect Rent While in Prison</label>
+                                                    <span className="setting-description">Rent will not be collected when landing on properties whose owners are in prison</span>
+                                                </div>
+                                                <label className="switch">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={noRentInPrison}
+                                                        onChange={(e) => setNoRentInPrison(e.target.checked)}
+                                                        disabled={!isCurrentPlayerHost}
+                                                    />
+                                                    <span className="slider"></span>
+                                                </label>
+                                            </div>
+
+                                            <div className="setting-row switch-row">
+                                                <div className="setting-label-wrapper">
+                                                    <label className="setting-label">Mortgage</label>
+                                                    <span className="setting-description">Mortgage properties to earn 50% of their cost, but you won't get paid rent when players land on them</span>
+                                                </div>
+                                                <label className="switch">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={mortgage}
+                                                        onChange={(e) => setMortgage(e.target.checked)}
+                                                        disabled={!isCurrentPlayerHost}
+                                                    />
+                                                    <span className="slider"></span>
+                                                </label>
+                                            </div>
+
+                                            <div className="setting-row switch-row">
+                                                <div className="setting-label-wrapper">
+                                                    <label className="setting-label">Even Build</label>
+                                                    <span className="setting-description">Houses and hotels must be built up and sold off evenly within a property set</span>
+                                                </div>
+                                                <label className="switch">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={evenBuild}
+                                                        onChange={(e) => setEvenBuild(e.target.checked)}
+                                                        disabled={!isCurrentPlayerHost}
+                                                    />
+                                                    <span className="slider"></span>
+                                                </label>
+                                            </div>
+
+                                            <div className="setting-row">
+                                                <div className="setting-label-wrapper">
+                                                    <label className="setting-label">Starting Cash</label>
+                                                    <span className="setting-description">Adjust how much money players start the game with</span>
+                                                </div>
+                                                <select
+                                                    className="setting-dropdown"
+                                                    value={startingCash}
+                                                    onChange={(e) => setStartingCash(parseInt(e.target.value))}
+                                                    disabled={!isCurrentPlayerHost}
+                                                >
+                                                    <option value={500}>$500</option>
+                                                    <option value={1000}>$1,000</option>
+                                                    <option value={1500}>$1,500</option>
+                                                    <option value={2000}>$2,000</option>
+                                                    <option value={2500}>$2,500</option>
+                                                    <option value={3000}>$3,000</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </>
@@ -1753,16 +1838,16 @@ which is ${payment_ammount}
                 {server !== undefined && (
                     <button 
                         className="invite-trigger-button"
-                        onClick={() => {
-                            const modal = document.querySelector('.invite-modal');
-                            if (modal) modal.classList.toggle('invite-modal-hidden');
+                                        onClick={() => {
+                            const sidebar = document.querySelector('.invite-sidebar');
+                            if (sidebar) sidebar.classList.toggle('invite-sidebar-hidden');
                         }}
                     >
                         <span className="invite-icon">🔗</span>
-                        Invite Friends
+                        Invite
                     </button>
                 )}
-            </div>
+                        </div>
 
             <p id="floating-clock"></p>
         </div>

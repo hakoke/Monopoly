@@ -1172,24 +1172,36 @@ div.entry-simple button:disabled {
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 24px 20px;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 }
 
 .lobby-layout {
     display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 30px;
+    grid-template-columns: 400px 1fr;
+    gap: 24px;
     width: 100%;
     margin-bottom: 20px;
+    max-width: 1400px;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
     .lobby-layout {
         grid-template-columns: 1fr;
         gap: 20px;
+    }
+}
+
+.lobby-players-section {
+    max-width: 400px;
+}
+
+@media (max-width: 1200px) {
+    .lobby-players-section {
+        max-width: 100%;
     }
 }
 
@@ -1204,11 +1216,33 @@ div.entry-simple button:disabled {
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 24px;
-    padding: 32px;
+    padding: 24px;
     box-shadow: 
         0 8px 32px rgba(0, 0, 0, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: fit-content;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.lobby-card::-webkit-scrollbar {
+    width: 6px;
+}
+
+.lobby-card::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.lobby-card::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.lobby-card::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .lobby-card:hover {
@@ -1317,9 +1351,44 @@ div.entry-simple button:disabled {
     box-shadow: 0 4px 12px rgba(65, 105, 225, 0.3);
 }
 
-.player-card.player-ready .player-avatar {
-    background: linear-gradient(135deg, #50c878 0%, #6dd489 100%);
-    box-shadow: 0 4px 12px rgba(80, 200, 120, 0.3);
+.player-card.player-host {
+    border-color: rgba(255, 215, 0, 0.6);
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+    background: rgba(255, 215, 0, 0.05);
+}
+
+.player-card.player-host .player-avatar {
+    background: linear-gradient(135deg, #ffc000 0%, #ffd700 100%);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.crown-icon {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: crownGlow 2s ease-in-out infinite;
+}
+
+@keyframes crownGlow {
+    0%, 100% {
+        filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6));
+    }
+    50% {
+        filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.9));
+    }
+}
+
+.host-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffc000;
+    background: rgba(255, 215, 0, 0.2);
+    padding: 4px 12px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(255, 215, 0, 0.4);
 }
 
 .player-name-text {
@@ -1340,13 +1409,13 @@ div.entry-simple button:disabled {
     letter-spacing: 0.5px;
 }
 
-.ready-button {
+.start-game-button {
     width: 100%;
     padding: 18px 32px;
     font-size: 18px;
     font-weight: 700;
     color: white;
-    background: linear-gradient(135deg, #4169e1 0%, #5a82f5 100%);
+    background: linear-gradient(135deg, #50c878 0%, #6dd489 100%);
     border: none;
     border-radius: 16px;
     cursor: pointer;
@@ -1356,13 +1425,14 @@ div.entry-simple button:disabled {
     justify-content: center;
     gap: 12px;
     box-shadow: 
-        0 4px 16px rgba(65, 105, 225, 0.4),
+        0 4px 16px rgba(80, 200, 120, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
     position: relative;
     overflow: hidden;
+    margin-top: 16px;
 }
 
-.ready-button::before {
+.start-game-button::before {
     content: '';
     position: absolute;
     top: 0;
@@ -1373,98 +1443,58 @@ div.entry-simple button:disabled {
     transition: left 0.5s;
 }
 
-.ready-button:hover:not(:disabled)::before {
+.start-game-button:hover:not(:disabled)::before {
     left: 100%;
 }
 
-.ready-button:hover:not(:disabled) {
+.start-game-button:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 
-        0 8px 24px rgba(65, 105, 225, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    background: linear-gradient(135deg, #5a82f5 0%, #6b95ff 100%);
-}
-
-.ready-button:active:not(:disabled) {
-    transform: translateY(0);
-}
-
-.ready-button.ready-active {
-    background: linear-gradient(135deg, #50c878 0%, #6dd489 100%);
-    box-shadow: 
-        0 4px 16px rgba(80, 200, 120, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-.ready-button.ready-active:hover:not(:disabled) {
-    background: linear-gradient(135deg, #6dd489 0%, #7ee89a 100%);
     box-shadow: 
         0 8px 24px rgba(80, 200, 120, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, #6dd489 0%, #7ee89a 100%);
 }
 
-.ready-button:disabled {
+.start-game-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.start-game-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    background: linear-gradient(135deg, #4169e1 0%, #5a82f5 100%);
 }
 
-.ready-icon {
-    font-size: 20px;
+.start-icon {
+    font-size: 18px;
     transition: transform 0.3s ease;
 }
 
-.all-ready-indicator {
+.start-game-button:hover:not(:disabled) .start-icon {
+    transform: scale(1.2);
+}
+
+.waiting-for-players {
     margin-top: 16px;
     padding: 12px;
-    background: rgba(80, 200, 120, 0.15);
-    border: 1px solid rgba(80, 200, 120, 0.3);
-    border-radius: 12px;
     text-align: center;
-    color: #50c878;
-    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
     font-size: 14px;
-    animation: readyPulse 2s ease-in-out infinite;
+    font-weight: 500;
 }
 
-.ready-pulse {
-    display: inline-block;
-    margin-right: 8px;
-    animation: pulse 1.5s ease-in-out infinite;
+/* Game Settings Section */
+.settings-card {
+    width: 100%;
 }
 
-@keyframes readyPulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.7;
-    }
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.2);
-    }
-}
-
-/* Game Mode Section */
-.mode-details-card {
-    margin-bottom: 20px;
-}
-
-.mode-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.settings-header {
     margin-bottom: 24px;
     padding-bottom: 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.mode-title {
+.settings-title {
     font-size: 28px;
     font-weight: 700;
     color: white;
@@ -1475,186 +1505,236 @@ div.entry-simple button:disabled {
     background-clip: text;
 }
 
-.mode-badge {
-    font-size: 12px;
-    font-weight: 700;
-    color: #4169e1;
-    background: rgba(65, 105, 225, 0.2);
-    padding: 6px 16px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border: 1px solid rgba(65, 105, 225, 0.4);
+.settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    padding-right: 4px;
 }
 
-.mode-settings {
+.settings-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.settings-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.settings-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.settings-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.setting-group {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-.setting-item {
+.setting-group-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.setting-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    padding: 14px 18px;
     background: rgba(255, 255, 255, 0.03);
-    border-radius: 12px;
+    border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+    gap: 16px;
+}
+
+@media (max-width: 768px) {
+    .setting-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .switch-row {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.setting-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.setting-label-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
 }
 
 .setting-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.7);
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    line-height: 1.4;
 }
 
-.setting-value {
-    font-size: 14px;
-    font-weight: 700;
+.setting-description {
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.4;
+}
+
+.setting-dropdown {
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
     color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+    min-width: 140px;
     font-family: 'Courier New', monospace;
 }
 
-.setting-value.setting-allowed {
-    color: #50c878;
-}
-
-.setting-value.setting-disabled {
-    color: rgba(255, 255, 255, 0.4);
-}
-
-.setting-value.setting-highlight {
-    color: #4169e1;
-    font-size: 16px;
-}
-
-.mode-selection-card {
-    margin-top: 20px;
-}
-
-.mode-selection-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: white;
-    margin: 0 0 20px 0;
-    text-align: center;
-}
-
-.mode-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.mode-option {
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    position: relative;
-    overflow: hidden;
-}
-
-.mode-option::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.5s;
-}
-
-.mode-option:hover:not(:disabled)::before {
-    left: 100%;
-}
-
-.mode-option:hover:not(:disabled) {
-    transform: translateY(-2px);
-    border-color: rgba(65, 105, 225, 0.4);
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-}
-
-.mode-option.mode-selected {
-    background: linear-gradient(135deg, rgba(65, 105, 225, 0.3) 0%, rgba(90, 130, 245, 0.3) 100%);
+.setting-dropdown:focus {
     border-color: #4169e1;
-    box-shadow: 
-        0 4px 16px rgba(65, 105, 225, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 4px rgba(65, 105, 225, 0.1);
 }
 
-.mode-option:disabled {
+.setting-dropdown:disabled {
     opacity: 0.4;
     cursor: not-allowed;
 }
 
-.mode-option-name {
-    flex: 1;
-}
-
-.mode-option-icon {
-    font-size: 18px;
-}
-
-.mode-check {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #4169e1 0%, #5a82f5 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.setting-dropdown option {
+    background: rgb(30, 30, 40);
     color: white;
-    font-size: 14px;
-    font-weight: bold;
+    padding: 8px;
+}
+
+/* Toggle Switch */
+.switch-row {
+    align-items: center;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 56px;
+    height: 32px;
     flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(65, 105, 225, 0.4);
+    cursor: pointer;
 }
 
-/* Invite Modal */
-.invite-modal {
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 32px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.switch input:checked + .slider {
+    background: linear-gradient(135deg, #4169e1 0%, #5a82f5 100%);
+    border-color: #4169e1;
+    box-shadow: 0 0 0 4px rgba(65, 105, 225, 0.1);
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+.switch input:disabled + .slider {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.switch input:disabled {
+    cursor: not-allowed;
+}
+
+.switch:hover:not(:has(input:disabled)) .slider {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.switch input:checked:hover:not(:disabled) + .slider {
+    background: linear-gradient(135deg, #5a82f5 0%, #6b95ff 100%);
+    box-shadow: 0 0 0 4px rgba(65, 105, 225, 0.15);
+}
+
+/* Invite Sidebar */
+.invite-sidebar {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    right: 0;
+    width: 380px;
+    height: 100vh;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(20, 20, 30, 0.95);
     backdrop-filter: blur(30px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
     padding: 0;
-    min-width: 420px;
-    max-width: 90vw;
     box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    animation: modalEnter 0.3s ease-out;
+        -10px 0 40px rgba(0, 0, 0, 0.5),
+        inset 1px 0 0 rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
 }
 
-.invite-modal-hidden {
-    display: none;
+.invite-sidebar-hidden {
+    transform: translateX(100%);
 }
 
-@keyframes modalEnter {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
+@media (max-width: 768px) {
+    .invite-sidebar {
+        width: 100%;
+        max-width: 420px;
     }
 }
 
@@ -1662,8 +1742,9 @@ div.entry-simple button:disabled {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 24px 32px;
+    padding: 24px 28px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .invite-title {
@@ -1695,10 +1776,11 @@ div.entry-simple button:disabled {
 }
 
 .invite-content {
-    padding: 32px;
+    padding: 28px;
     display: flex;
     flex-direction: column;
     gap: 24px;
+    flex: 1;
 }
 
 .invite-link-wrapper {
@@ -1801,24 +1883,33 @@ div.entry-simple button:disabled {
 
 .invite-trigger-button {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    bottom: 24px;
+    right: 24px;
     z-index: 999;
-    padding: 16px 28px;
+    padding: 14px 24px;
     background: linear-gradient(135deg, #4169e1 0%, #5a82f5 100%);
     border: none;
     border-radius: 16px;
     color: white;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     box-shadow: 
         0 8px 24px rgba(65, 105, 225, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 768px) {
+    .invite-trigger-button {
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        font-size: 14px;
+    }
 }
 
 .invite-trigger-button:hover {
