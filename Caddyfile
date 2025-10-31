@@ -1,0 +1,5 @@
+:8080
+
+root * /app/docs
+
+file_server
