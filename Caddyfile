@@ -3,14 +3,9 @@
 # Serve static files from docs directory
 root * docs
 
-# Handle all requests
-@notFiles {
-    not path *.js *.css *.png *.jpg *.jpeg *.gif *.svg *.ico *.woff *.woff2 *.ttf *.mp3 *.html
-}
-
-# Serve index.html for non-file routes (SPA routing)
-rewrite @notFiles /index.html
-
-# Enable file server for all other files
+# Enable file server
 file_server
+
+# Serve index.html for all routes (SPA routing)
+try_files {path} /index.html
 
