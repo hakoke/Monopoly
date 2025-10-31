@@ -70,8 +70,24 @@ const getRoutes = () => {
 const router = createBrowserRouter(getRoutes());
 
 function App() {
-    return <RouterProvider router={router} />;
+    try {
+        return <RouterProvider router={router} />;
+    } catch (error) {
+        console.error("App error:", error);
+        return <div style={{ color: "white", padding: "20px" }}>Error loading app. Please refresh the page.</div>;
+    }
 }
 
 document.title = "Monopoly";
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(<App />);
+
+const rootElement = document.getElementById("root");
+if (rootElement) {
+    try {
+        ReactDOM.createRoot(rootElement).render(<App />);
+    } catch (error) {
+        console.error("React render error:", error);
+        rootElement.innerHTML = '<div style="color: white; padding: 20px; background: black;">Error loading application. Please refresh.</div>';
+    }
+} else {
+    console.error("Root element not found!");
+}

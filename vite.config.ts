@@ -13,5 +13,6 @@ export default defineConfig({
     },
     // Use /Monopoly/ for GitHub Pages, / for Railway/Root deployments
     // Set VITE_BASE_PATH="/Monopoly/" environment variable for GitHub Pages
+    // Railway should use "/" so don't set VITE_BASE_PATH for Railway
     base: process.env.VITE_BASE_PATH || "/",
 });

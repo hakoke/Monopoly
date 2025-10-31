@@ -85,7 +85,7 @@ export default function Home() {
         if (urlCode && !isSignedIn && !disabled && urlCode !== addr) {
             SetAddress(urlCode);
         }
-    }, [urlCode, isSignedIn, disabled]);
+    }, [urlCode, isSignedIn, disabled, addr]);
 
     const joinButtonClicked = async () => {
         if (name.replace(" ", "").length === 0) {
