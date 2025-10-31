@@ -2,6 +2,7 @@ import Peer, { DataConnection, PeerOptions } from "peerjs";
 import { TranslateCode, code } from "./code";
 import Config from "../config";
 
+// Build peer options - only include host if it's defined
 const peerOptions: PeerOptions = {
 	// @ts-ignore
 	debug: Config.PEER_DEBUG_LEVEL ?? 0,
@@ -9,9 +10,13 @@ const peerOptions: PeerOptions = {
 	secure: Config.PEER_SECURE ?? false,
 	// @ts-ignore
 	port: Config.PEER_SERVER_PORT ?? 443,
-	// @ts-ignore
-	host: Config.PEER_SERVER_HOST ?? undefined,
 };
+
+// Only add host if it's defined (PeerJS uses default cloud servers when host is omitted)
+if (Config.PEER_SERVER_HOST !== undefined) {
+	// @ts-ignore
+	peerOptions.host = Config.PEER_SERVER_HOST;
+}
 
 export function io(uri: string): Promise<Socket> {
 	return new Promise((resolve, reject) => {
