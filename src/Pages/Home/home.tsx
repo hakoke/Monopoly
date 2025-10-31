@@ -239,12 +239,89 @@ export default function Home() {
         setTimeout(() => {
             const entrySimple = document.querySelector('.entry-simple');
             const title = document.querySelector('.monopoly-title');
-            console.log("DOM elements:", {
-                entrySimple: !!entrySimple,
-                title: !!title,
-                entrySimpleStyles: entrySimple ? window.getComputedStyle(entrySimple as Element) : null,
-                rootElement: document.getElementById('root')
+            const rootElement = document.getElementById('root');
+            
+            // Get computed styles
+            const entrySimpleStyles = entrySimple ? window.getComputedStyle(entrySimple as Element) : null;
+            const titleStyles = title ? window.getComputedStyle(title as Element) : null;
+            const rootStyles = rootElement ? window.getComputedStyle(rootElement) : null;
+            
+            // Log detailed information
+            console.log("=== DOM DEBUG INFO ===");
+            console.log("Root element exists:", !!rootElement);
+            if (rootElement) {
+                console.log("Root element:", rootElement);
+                console.log("Root element innerHTML length:", rootElement.innerHTML.length);
+                console.log("Root element children count:", rootElement.children.length);
+            }
+            
+            console.log("Entry-simple element exists:", !!entrySimple);
+            if (entrySimple) {
+                console.log("Entry-simple element:", entrySimple);
+                console.log("Entry-simple element visible:", entrySimple instanceof HTMLElement ? entrySimple.offsetWidth > 0 && entrySimple.offsetHeight > 0 : false);
+                console.log("Entry-simple offsetWidth:", entrySimple instanceof HTMLElement ? entrySimple.offsetWidth : 'N/A');
+                console.log("Entry-simple offsetHeight:", entrySimple instanceof HTMLElement ? entrySimple.offsetHeight : 'N/A');
+            }
+            
+            console.log("Title element exists:", !!title);
+            if (title) {
+                console.log("Title element:", title);
+                console.log("Title text content:", title.textContent);
+            }
+            
+            // Log all computed styles
+            if (entrySimpleStyles) {
+                console.log("=== Entry-Simple Computed Styles ===");
+                console.log("display:", entrySimpleStyles.display);
+                console.log("visibility:", entrySimpleStyles.visibility);
+                console.log("opacity:", entrySimpleStyles.opacity);
+                console.log("position:", entrySimpleStyles.position);
+                console.log("top:", entrySimpleStyles.top);
+                console.log("left:", entrySimpleStyles.left);
+                console.log("transform:", entrySimpleStyles.transform);
+                console.log("width:", entrySimpleStyles.width);
+                console.log("height:", entrySimpleStyles.height);
+                console.log("minWidth:", entrySimpleStyles.minWidth);
+                console.log("minHeight:", entrySimpleStyles.minHeight);
+                console.log("maxWidth:", entrySimpleStyles.maxWidth);
+                console.log("zIndex:", entrySimpleStyles.zIndex);
+                console.log("color:", entrySimpleStyles.color);
+                console.log("backgroundColor:", entrySimpleStyles.backgroundColor);
+            }
+            
+            if (titleStyles) {
+                console.log("=== Title Computed Styles ===");
+                console.log("display:", titleStyles.display);
+                console.log("visibility:", titleStyles.visibility);
+                console.log("opacity:", titleStyles.opacity);
+                console.log("fontSize:", titleStyles.fontSize);
+                console.log("color:", titleStyles.color);
+                console.log("position:", titleStyles.position);
+            }
+            
+            if (rootStyles) {
+                console.log("=== Root Element Computed Styles ===");
+                console.log("display:", rootStyles.display);
+                console.log("position:", rootStyles.position);
+                console.log("width:", rootStyles.width);
+                console.log("height:", rootStyles.height);
+                console.log("minHeight:", rootStyles.minHeight);
+                console.log("zIndex:", rootStyles.zIndex);
+            }
+            
+            // Check if CSS is loaded
+            const allStylesheets = Array.from(document.styleSheets);
+            console.log("=== Stylesheets ===");
+            console.log("Total stylesheets:", allStylesheets.length);
+            allStylesheets.forEach((sheet, index) => {
+                try {
+                    console.log(`Stylesheet ${index}:`, sheet.href || 'inline', 'rules:', sheet.cssRules?.length || 0);
+                } catch (e) {
+                    console.log(`Stylesheet ${index}: (cannot access)`, sheet.href || 'inline');
+                }
             });
+            
+            console.log("=== End DOM Debug ===");
         }, 100);
     }, [socket, isSignedIn, urlCode, name, disabled]);
 
