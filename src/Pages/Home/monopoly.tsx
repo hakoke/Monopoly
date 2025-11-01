@@ -1679,7 +1679,6 @@ which is ${payment_ammount}
                     time={startTIme}
                     selectedMode={selectedMode}
                 />
-                    </div>
                 </div>
                 
                 <p id="floating-clock"></p>

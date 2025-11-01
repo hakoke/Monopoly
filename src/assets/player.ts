@@ -55,18 +55,19 @@ export class Player {
     get color() {
         switch (this.icon) {
             case 0:
-                return "#E0115F";
+                return "#E0115F"; // Ruby Red
             case 1:
-                return "#4169e1";
+                return "#4169e1"; // Royal Blue
             case 2:
-                return "#50C878";
+                return "#50C878"; // Emerald Green
             case 3:
-                return "#FFC000";
-            case 5:
-                return "#FF7F50";
+                return "#FFC000"; // Golden Yellow
             case 4:
+                return "#9B59B6"; // Purple
+            case 5:
+                return "#FF7F50"; // Coral Orange
             default:
-                return "";
+                return "#4169e1"; // Default to Blue
         }
     }
 }
