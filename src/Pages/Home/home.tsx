@@ -171,13 +171,16 @@ export default function Home() {
     }, []);
 
     function createGame() {
+        console.log("Create game clicked, name:", name);
         try {
             if (name.replace(" ", "").length === 0) {
                 notifyRef.current?.message("please add your name before creating a game", "info", 2);
                 return;
             }
 
+            console.log("Starting server creation...");
             onlineServer(serverPCount, async (host, server) => {
+                console.log("Server created with code:", host);
                 SetDisabled(true);
                 server.code = host;
                 SetAddress(host);
@@ -219,7 +222,8 @@ export default function Home() {
                     }
                 });
             });
-        } catch {
+        } catch (error) {
+            console.error("Error creating game:", error);
             SetDisabled(false);
         }
     }

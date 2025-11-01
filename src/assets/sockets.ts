@@ -116,9 +116,11 @@ export class Server {
 		while (error) {
 			try {
 				_code = code();
+				console.log("Creating PeerJS server with code:", _code, "options:", peerOptions);
 				_socket = new Peer(TranslateCode(_code), peerOptions);
 				error = false;
-			} catch {
+			} catch (e) {
+				console.error("Error creating Peer:", e);
 				error = true;
 			}
 		}
@@ -131,7 +133,12 @@ export class Server {
 		};
 		this.renderFunction = () => {};
 		this.socket.on("open", async () => {
+			console.log("PeerJS server opened successfully");
 			idf?.(this);
+		});
+		
+		this.socket.on("error", (err) => {
+			console.error("PeerJS server error:", err);
 		});
 
 		this.socket.on("connection", (dataConnection) => {
