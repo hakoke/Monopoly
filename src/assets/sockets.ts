@@ -16,6 +16,8 @@ const peerOptions: PeerOptions = {
 if (Config.PEER_SERVER_HOST !== undefined) {
 	// @ts-ignore
 	peerOptions.host = Config.PEER_SERVER_HOST;
+	// @ts-ignore
+	peerOptions.path = '/'; // Required for peerjs.com servers
 }
 
 export function io(uri: string): Promise<Socket> {
@@ -135,18 +137,27 @@ export class Server {
 		
 		// Add timeout for peer opening
 		const openTimeout = setTimeout(() => {
-			console.error("PeerJS server failed to open within 10 seconds");
-		}, 10000);
+			console.error("PeerJS server failed to open within 30 seconds - ID may not be registering");
+			console.error("This usually means PeerJS cloud servers are not responding to peer registration");
+		}, 30000);
 		
 		this.socket.on("open", async () => {
 			clearTimeout(openTimeout);
-			console.log("PeerJS server opened successfully");
+			console.log("✅ PeerJS server opened successfully with ID:", _socket.id);
 			idf?.(this);
 		});
 		
 		this.socket.on("error", (err) => {
 			clearTimeout(openTimeout);
-			console.error("PeerJS server error:", err);
+			console.error("❌ PeerJS server error:", err);
+		});
+		
+		this.socket.on("disconnected", () => {
+			console.warn("⚠️ PeerJS server disconnected");
+		});
+		
+		this.socket.on("close", () => {
+			console.warn("⚠️ PeerJS server closed");
 		});
 
 		this.socket.on("connection", (dataConnection) => {

@@ -186,10 +186,10 @@ export default function Home() {
             
             // Add timeout to detect if server creation hangs
             const creationTimeout = setTimeout(() => {
-                console.error("Server creation is taking too long (>10s)");
-                notifyRef.current?.message("⚠️ Server connection failed. PeerJS cloud servers may be unreachable. Please try again or contact support.", "error", 8);
+                console.error("Server creation is taking too long (>30s)");
+                notifyRef.current?.message("⚠️ Server connection failed. PeerJS cloud servers are not responding. This is a known issue - please try again in a few moments.", "error", 10);
                 SetDisabled(false);
-            }, 10000);
+            }, 30000);
             
             onlineServer(serverPCount, async (host, server) => {
                 clearTimeout(creationTimeout);
