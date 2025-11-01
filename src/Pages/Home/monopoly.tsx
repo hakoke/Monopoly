@@ -10,6 +10,7 @@ import { MonopolySettings, MonopolyModes, historyAction, history, GameTrading, M
 import { CookieManager } from "../../assets/cookieManager.ts";
 import { translateGroup } from "../../components/ingame/streetCard.tsx";
 import "../../game-layout.css";
+import "../../piece-selection.css";
 function App({ socket, name, server }: { socket: Socket; name: string; server: Server | undefined }) {
     const [clients, SetClients] = useState<Map<string, Player>>(new Map());
     const players = Array.from(clients.values());
@@ -44,6 +45,10 @@ function App({ socket, name, server }: { socket: Socket; name: string; server: S
     // Chat messages state
     const [chatMessages, setChatMessages] = useState<Array<{ from: string; message: string }>>([]);
     const chatMessagesRef = useRef<HTMLDivElement>(null);
+    
+    // Piece selection state
+    const [showPieceSelection, setShowPieceSelection] = useState(false);
+    const [selectedPiece, setSelectedPiece] = useState<number | null>(null);
     
     // Auto-scroll chat when new messages arrive
     useEffect(() => {
@@ -269,21 +274,8 @@ function App({ socket, name, server }: { socket: Socket; name: string; server: S
         };
         const socket_StartGame = () => {
             SetGameStarted(true);
-            function A(n: number) {
-                const p = document.querySelector("p#floating-clock") as HTMLParagraphElement;
-                p.innerHTML = `${n}`;
-                p.className = "clocking";
-            }
-            A(3);
-            setTimeout(() => {
-                A(2);
-                setTimeout(() => {
-                    A(1);
-                    setTimeout(() => {
-                        SetGameStartedDisplay(true);
-                    }, 1000);
-                }, 1000);
-            }, 1000);
+            // Show piece selection modal
+            setShowPieceSelection(true);
         };
 
         const socket_DisconnectedPlayer = (args: { id: string; turn: string }) => {
@@ -1366,6 +1358,12 @@ which is ${payment_ammount}
         socket.on("disconnect", socket_networkDisconnect);
         socket.on("player_update", socket_playerUpdate);
         socket.on("history", socket_history);
+        socket.on("player-icon", (args: { id: string; icon: number }) => {
+            const x = clients.get(args.id);
+            if (x === undefined) return;
+            x.icon = args.icon;
+            SetClients(new Map(clients));
+        });
 
         // Trade
         socket.on("trade", () => {
@@ -1408,7 +1406,71 @@ which is ${payment_ammount}
         navRef.current?.reRenderPlayerList();
     }, [clients]);
 
-    return gameStartedDisplay ? (
+    // Handle piece selection confirmation
+    const confirmPieceSelection = () => {
+        if (selectedPiece === null) return;
+        
+        // Emit icon selection to server
+        socket.emit('player-icon', selectedPiece);
+        
+        setShowPieceSelection(false);
+        
+        // Start countdown
+        function A(n: number) {
+            const p = document.querySelector("p#floating-clock") as HTMLParagraphElement;
+            p.innerHTML = `${n}`;
+            p.className = "clocking";
+        }
+        A(3);
+        setTimeout(() => {
+            A(2);
+            setTimeout(() => {
+                A(1);
+                setTimeout(() => {
+                    SetGameStartedDisplay(true);
+                }, 1000);
+            }, 1000);
+        }, 1000);
+    };
+    
+    return showPieceSelection ? (
+        <>
+            <div className="piece-selection-overlay">
+                <div className="piece-selection-modal">
+                    <h2 className="piece-selection-title">Choose Your Game Piece</h2>
+                    <p className="piece-selection-subtitle">Select the piece you want to play with</p>
+                    <div className="pieces-grid">
+                        {[0, 1, 2, 3, 4, 5].map((pieceNum) => {
+                            const pieceColor = clients.get(socket.id)?.color || '#4169e1';
+                            const isSelected = selectedPiece === pieceNum;
+                            const isTaken = Array.from(clients.values()).some(p => p.icon === pieceNum && p.id !== socket.id);
+                            
+                            return (
+                                <button
+                                    key={pieceNum}
+                                    className={`piece-option ${isSelected ? 'piece-selected' : ''} ${isTaken ? 'piece-taken' : ''}`}
+                                    onClick={() => !isTaken && setSelectedPiece(pieceNum)}
+                                    disabled={isTaken}
+                                    style={{ '--piece-color': pieceColor } as React.CSSProperties}
+                                >
+                                    <img src={`/p${pieceNum}.png`} alt={`Piece ${pieceNum + 1}`} />
+                                    {isTaken && <span className="taken-label">Taken</span>}
+                                </button>
+                            );
+                        })}
+                    </div>
+                    <button
+                        className="confirm-piece-btn"
+                        onClick={confirmPieceSelection}
+                        disabled={selectedPiece === null}
+                    >
+                        {selectedPiece === null ? 'Select a Piece' : 'Confirm & Start Game'}
+                    </button>
+                </div>
+            </div>
+            <NotifyElement ref={notifyRef} />
+        </>
+    ) : gameStartedDisplay ? (
         <>
             {globalSettings !== undefined && globalSettings.accessibility[3] ? (
                 <div className="cursors">
@@ -1446,38 +1508,34 @@ which is ${payment_ammount}
                     {server !== undefined && (
                         <div className="share-section">
                             <h3 className="share-title">Share this game</h3>
-                            <div className="share-link-container">
+                            <div className="share-url-display">
                                 <input
                                     type="text"
                                     readOnly
                                     value={window.location.origin + (import.meta.env.BASE_URL || "/").replace(/\/$/, "") + `/game/${server.code}`}
-                                    className="share-link-input"
+                                    className="share-url-input"
                                     id="game-share-link"
                                     onClick={(e) => e.currentTarget.select()}
                                 />
-                                <button
-                                    className="share-copy-btn"
-                                    onClick={() => {
-                                        const input = document.getElementById("game-share-link") as HTMLInputElement;
-                                        input.select();
-                                        navigator.clipboard.writeText(input.value);
-                                        const btn = document.querySelector('.share-copy-btn');
-                                        if (btn) {
-                                            const originalText = btn.textContent;
-                                            btn.textContent = '✓';
-                                            setTimeout(() => {
-                                                btn.textContent = originalText;
-                                            }, 2000);
-                                        }
-                                    }}
-                                >
-                                    📋
-                                </button>
                             </div>
-                            <div className="game-code-display">
-                                <span className="code-label-small">Code:</span>
-                                <span className="code-value-small">{server.code}</span>
-                            </div>
+                            <button
+                                className="share-copy-button"
+                                onClick={(e) => {
+                                    const input = document.getElementById("game-share-link") as HTMLInputElement;
+                                    input.select();
+                                    navigator.clipboard.writeText(input.value);
+                                    const btn = e.currentTarget;
+                                    const originalHTML = btn.innerHTML;
+                                    btn.innerHTML = '<span class="copy-check">✓</span> Copied!';
+                                    btn.classList.add('copied');
+                                    setTimeout(() => {
+                                        btn.innerHTML = originalHTML;
+                                        btn.classList.remove('copied');
+                                    }, 2000);
+                                }}
+                            >
+                                <span className="copy-icon">📋</span> Copy Link
+                            </button>
                         </div>
                     )}
 

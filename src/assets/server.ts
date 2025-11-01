@@ -334,6 +334,28 @@ export async function main(playersCount: number, f?: (host: string, Server: Serv
                     server.logFunction(e);
                 }
             });
+            
+            // Handle player icon selection
+            socket.on("player-icon", (iconNum: number) => {
+                try {
+                    const client = Clients.get(socket.id);
+                    if (client === undefined) return;
+                    
+                    client.player.icon = iconNum;
+                    Clients.set(socket.id, client);
+                    
+                    // Broadcast to all players
+                    EmitAll("player-icon", {
+                        id: socket.id,
+                        icon: iconNum
+                    });
+                    
+                    server.logFunction(`Player ${client.player.username} selected icon ${iconNum}`);
+                } catch (e) {
+                    server.logFunction(e);
+                }
+            });
+            
             socket.on("ready", (args: { ready?: boolean; mode?: MonopolyMode; forceStart?: boolean }) => {
                 try {
                     const client = Clients.get(socket.id);

@@ -103,6 +103,9 @@
     padding: 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.02);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .share-title {
@@ -111,75 +114,85 @@
     color: rgba(255, 255, 255, 0.8);
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    margin: 0 0 12px 0;
+    margin: 0;
 }
 
-.share-link-container {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
+.share-url-display {
+    width: 100%;
 }
 
-.share-link-input {
-    flex: 1;
-    padding: 10px 12px;
+.share-url-input {
+    width: 100%;
+    padding: 12px 14px;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
+    border-radius: 10px;
     color: white;
     font-size: 12px;
     font-family: 'Courier New', monospace;
     outline: none;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
 }
 
-.share-link-input:focus {
+.share-url-input:focus {
     border-color: #4169e1;
-    box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.1);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.15);
 }
 
-.share-copy-btn {
-    padding: 10px 14px;
+.share-copy-button {
+    width: 100%;
+    padding: 12px 18px;
     background: linear-gradient(135deg, #4169e1 0%, #5a82f5 100%);
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     color: white;
-    font-size: 16px;
+    font-size: 14px;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 44px;
-}
-
-.share-copy-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(65, 105, 225, 0.4);
-}
-
-.game-code-display {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 8px;
-    padding: 10px 14px;
-    background: linear-gradient(135deg, rgba(65, 105, 225, 0.15) 0%, rgba(90, 130, 245, 0.1) 100%);
-    border: 1px solid rgba(65, 105, 225, 0.3);
-    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(65, 105, 225, 0.3);
 }
 
-.code-label-small {
-    font-size: 11px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.6);
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.share-copy-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(65, 105, 225, 0.4);
+    background: linear-gradient(135deg, #5a82f5 0%, #6b95ff 100%);
 }
 
-.code-value-small {
+.share-copy-button:active {
+    transform: translateY(0);
+}
+
+.share-copy-button.copied {
+    background: linear-gradient(135deg, #50c878 0%, #6dd489 100%);
+    box-shadow: 0 4px 12px rgba(80, 200, 120, 0.3);
+}
+
+.copy-icon {
+    font-size: 16px;
+}
+
+.copy-check {
     font-size: 18px;
-    font-weight: 900;
-    color: #4169e1;
-    font-family: 'Courier New', monospace;
-    letter-spacing: 3px;
-    text-shadow: 0 2px 4px rgba(65, 105, 225, 0.3);
+    animation: checkBounce 0.4s ease-out;
+}
+
+@keyframes checkBounce {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Chat Section */
@@ -322,53 +335,52 @@
 }
 
 .player-game-card.player-turn {
-    border-color: #ffc000;
-    background: rgba(255, 192, 0, 0.12);
-    box-shadow: 0 0 0 2px rgba(255, 192, 0, 0.4), 0 4px 12px rgba(255, 192, 0, 0.25);
-    animation: turnPulse 2s ease-in-out infinite;
+    background: rgba(255, 255, 255, 0.08);
+    border-left: 3px solid #ffc000;
+    box-shadow: 0 2px 8px rgba(255, 192, 0, 0.2);
+}
+
+.player-game-card.player-turn .player-color-bar {
+    width: 3px;
+    opacity: 1;
+    box-shadow: 0 0 8px currentColor;
 }
 
 .player-game-card.player-turn::after {
-    content: '▶';
+    content: '⏵';
     position: absolute;
-    right: 12px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     color: #ffc000;
-    font-size: 14px;
-    font-weight: bold;
-    animation: turnArrow 1.5s ease-in-out infinite;
-}
-
-@keyframes turnPulse {
-    0%, 100% {
-        box-shadow: 0 0 0 2px rgba(255, 192, 0, 0.4), 0 4px 12px rgba(255, 192, 0, 0.25);
-    }
-    50% {
-        box-shadow: 0 0 0 2px rgba(255, 192, 0, 0.6), 0 4px 16px rgba(255, 192, 0, 0.4);
-    }
-}
-
-@keyframes turnArrow {
-    0%, 100% {
-        opacity: 0.6;
-        transform: translateY(-50%) translateX(0);
-    }
-    50% {
-        opacity: 1;
-        transform: translateY(-50%) translateX(4px);
-    }
+    font-size: 12px;
+    opacity: 0.7;
 }
 
 .player-game-card.player-myself {
-    border-color: rgba(65, 105, 225, 0.6);
-    background: rgba(65, 105, 225, 0.1);
-    box-shadow: 0 0 0 2px rgba(65, 105, 225, 0.25);
+    background: rgba(65, 105, 225, 0.06);
+    position: relative;
 }
 
-.player-game-card.player-myself .player-game-name {
-    color: #5a82f5;
+.player-game-card.player-myself::before {
+    content: 'YOU';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 9px;
     font-weight: 700;
+    color: rgba(65, 105, 225, 0.5);
+    letter-spacing: 1px;
+}
+
+.player-game-card.player-turn.player-myself::before {
+    content: 'YOUR TURN';
+    color: rgba(255, 192, 0, 0.6);
+}
+
+.player-game-card.player-turn.player-myself::after {
+    display: none;
 }
 
 .player-color-bar {
