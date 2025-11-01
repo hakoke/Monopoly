@@ -142,7 +142,6 @@ const DynamicBoard: React.FC = () => {
 
     // Render special tiles (Chance, Community Chest, Tax)
     const renderSpecialTile = (tileId: string, position: number) => {
-        const property = propertyMap.get(tileId);
         const posClass = getPositionClass(position);
         let className = `tile-special ${posClass} pos-${position}`;
         let icon = '';
