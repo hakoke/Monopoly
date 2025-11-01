@@ -865,12 +865,28 @@ div.board {
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
-    width: 900px;
+    width: min(90vh, 90vw, 900px);
+    max-width: 900px;
     background-image: url("/board2.png");
     background-size: cover;
     box-shadow: 0px 0px 0px 3px black;
     z-index: 0;
     transition: transform 0.1s ease-out;
+}
+
+/* Adjust board size for new layout */
+.game-layout .board {
+    width: min(calc(100vh - 40px), calc(100vw - 640px), 850px);
+}
+
+/* Ensure proper containment in game center */
+.game-layout .game {
+    background-color: transparent !important;
+}
+
+/* Keep action bar visible in new layout */
+.game-layout .action-bar {
+    z-index: 100;
 }
 
 div.board div#display-houses div.street-houses {

@@ -8,6 +8,8 @@ import NotifyElement, { NotificatorRef } from "../../components/notificator.tsx"
 import monopolyJSON from "../../assets/monopoly.json";
 import { MonopolySettings, MonopolyModes, historyAction, history, GameTrading, MonopolyMode } from "../../assets/types.ts";
 import { CookieManager } from "../../assets/cookieManager.ts";
+import { translateGroup } from "../../components/ingame/streetCard.tsx";
+import "../../game-layout.css";
 function App({ socket, name, server }: { socket: Socket; name: string; server: Server | undefined }) {
     const [clients, SetClients] = useState<Map<string, Player>>(new Map());
     const players = Array.from(clients.values());
@@ -38,6 +40,17 @@ function App({ socket, name, server }: { socket: Socket; name: string; server: S
     const [histories, SetHistories] = useState<Array<historyAction>>([]);
 
     const [currentTrade, setTrade] = useState<GameTrading | boolean | undefined>(undefined);
+    
+    // Chat messages state
+    const [chatMessages, setChatMessages] = useState<Array<{ from: string; message: string }>>([]);
+    const chatMessagesRef = useRef<HTMLDivElement>(null);
+    
+    // Auto-scroll chat when new messages arrive
+    useEffect(() => {
+        if (chatMessagesRef.current) {
+            chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+        }
+    }, [chatMessages]);
 
     useEffect(() => {
         if (!gameStartedDisplay) return;
@@ -494,6 +507,7 @@ function App({ socket, name, server }: { socket: Socket; name: string; server: S
         };
 
         const socket_Message = (message: { from: string; message: string }) => {
+            setChatMessages((prev) => [...prev, message]);
             navRef.current?.addMessage(message);
         };
         const socket_DiceRollResult = (args: { listOfNums: [number, number, number]; turnId: string }) => {
@@ -1416,15 +1430,204 @@ which is ${payment_ammount}
             ) : (
                 <></>
             )}
-            <main>
-                <MonopolyNav
-                    currentTurn={currentId}
-                    ref={navRef}
-                    name={name}
-                    socket={socket}
-                    players={players}
-                    server={server}
-                    Morgage={{
+            <div className="game-layout">
+                {/* Left Sidebar */}
+                <div className="game-sidebar game-sidebar-left">
+                    {/* Logo */}
+                    <div className="sidebar-logo">
+                        <img src="/icon.png" alt="Monopoly" />
+                        <div className="logo-text">
+                            <h2>MONOPOLY</h2>
+                            <span>Multiplayer</span>
+                        </div>
+                    </div>
+
+                    {/* Share Link */}
+                    {server !== undefined && (
+                        <div className="share-section">
+                            <h3 className="share-title">Share this game</h3>
+                            <div className="share-link-container">
+                                <input
+                                    type="text"
+                                    readOnly
+                                    value={window.location.origin + (import.meta.env.BASE_URL || "/").replace(/\/$/, "") + `/game/${server.code}`}
+                                    className="share-link-input"
+                                    id="game-share-link"
+                                    onClick={(e) => e.currentTarget.select()}
+                                />
+                                <button
+                                    className="share-copy-btn"
+                                    onClick={() => {
+                                        const input = document.getElementById("game-share-link") as HTMLInputElement;
+                                        input.select();
+                                        navigator.clipboard.writeText(input.value);
+                                        const btn = document.querySelector('.share-copy-btn');
+                                        if (btn) {
+                                            const originalText = btn.textContent;
+                                            btn.textContent = '✓';
+                                            setTimeout(() => {
+                                                btn.textContent = originalText;
+                                            }, 2000);
+                                        }
+                                    }}
+                                >
+                                    📋
+                                </button>
+                            </div>
+                            <div className="game-code-display">
+                                <span className="code-label-small">Code:</span>
+                                <span className="code-value-small">{server.code}</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Chat */}
+                    <div className="chat-section">
+                        <h3 className="chat-title">Chat</h3>
+                        <div className="chat-messages" ref={chatMessagesRef}>
+                            {chatMessages.map((msg, i) => (
+                                <div key={i} className="chat-message">
+                                    <span className="chat-from">{msg.from}:</span>
+                                    <span className="chat-text">{msg.message}</span>
+                                </div>
+                            ))}
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Type a message..."
+                            className="chat-input"
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                                    socket.emit('message', e.currentTarget.value);
+                                    e.currentTarget.value = '';
+                                }
+                            }}
+                        />
+                    </div>
+                </div>
+
+                {/* Center - Game Board */}
+                <div className="game-center">
+                    <MonopolyGame
+                        clickedOnBoard={(a) => {
+                            navRef.current?.clickedOnBoard(a);
+                        }}
+                        ref={engineRef}
+                        socket={socket}
+                        players={Array.from(clients.values())}
+                        myTurn={currentId === socket.id}
+                        tradeObj={currentTrade}
+                        tradeApi={{
+                            onSelectPlayer(pId) {
+                                const xplayer = clients.get(pId);
+                                const localPlayer = clients.get(socket.id);
+                                if (xplayer === undefined || localPlayer === undefined) return;
+                                const x = {
+                                    turnPlayer: {
+                                        id: localPlayer.id,
+                                        balance: 0,
+                                        prop: [],
+                                    },
+                                    againstPlayer: {
+                                        id: xplayer.id,
+                                        balance: 0,
+                                        prop: [],
+                                    },
+                                };
+                                socket.emit("trade-update", x);
+                            },
+                        }}
+                        selectedMode={selectedMode}
+                    />
+                </div>
+
+                {/* Right Sidebar */}
+                <div className="game-sidebar game-sidebar-right">
+                    {/* Player List */}
+                    <div className="players-section">
+                        <h3 className="section-title">Players</h3>
+                        <div className="players-game-list">
+                            {Array.from(clients.values()).map((player, i) => {
+                                const isCurrentTurn = player.id === currentId;
+                                const isMyself = player.id === socket.id;
+                                const playerIsHost = player.id === hostId;
+                                
+                                return (
+                                    <div
+                                        key={i}
+                                        className={`player-game-card ${isCurrentTurn ? 'player-turn' : ''} ${isMyself ? 'player-myself' : ''}`}
+                                    >
+                                        <div className="player-color-bar" style={{ background: player.color || '#4169e1' }}></div>
+                                        <div className="player-game-info">
+                                            <div className="player-name-row">
+                                                <span className="player-game-name">{player.username}</span>
+                                                {playerIsHost && <span className="king-icon">👑</span>}
+                                            </div>
+                                            <span className="player-balance">${player.balance}</span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Bankrupt Button */}
+                    <button className="bankrupt-btn" onClick={() => {
+                        if (window.confirm('Are you sure you want to declare bankruptcy?')) {
+                            // Handle bankruptcy logic
+                            socket.emit('bankrupt');
+                        }
+                    }}>
+                        <span className="bankrupt-icon">▶</span>
+                        Bankrupt
+                    </button>
+
+                    {/* Trades Section */}
+                    <div className="trades-section">
+                        <div className="section-header">
+                            <h3 className="section-title">Trades</h3>
+                            <button className="create-trade-btn">
+                                <span>+</span> Create
+                            </button>
+                        </div>
+                        <div className="trades-content">
+                            <p className="empty-message">No active trades</p>
+                        </div>
+                    </div>
+
+                    {/* My Properties */}
+                    <div className="properties-section">
+                        <h3 className="section-title">My Properties ({clients.get(socket.id)?.properties.length || 0})</h3>
+                        <div className="properties-content">
+                            {clients.get(socket.id)?.properties.length === 0 ? (
+                                <p className="empty-message">No properties owned</p>
+                            ) : (
+                                clients.get(socket.id)?.properties.map((prop, i) => {
+                                    const propData = propretyMap.get(prop.posistion);
+                                    return (
+                                        <div key={i} className="property-item" onClick={() => {
+                                            navRef.current?.clickedOnBoard(prop.posistion);
+                                        }}>
+                                            <div className="property-color-box" style={{ background: translateGroup(prop.group) || '#ccc' }}></div>
+                                            <span className="property-name">{propData?.name || 'Unknown'}</span>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Hidden Nav for backward compatibility */}
+                <div style={{ display: 'none' }}>
+                    <MonopolyNav
+                        currentTurn={currentId}
+                        ref={navRef}
+                        name={name}
+                        socket={socket}
+                        players={players}
+                        server={server}
+                        Morgage={{
                         onCanc: (a, prpName: string) => {
                             var settings = JSON.parse(decodeURIComponent(CookieManager.get("monopolySettings") as string))[
                                 "monopolySettings"
@@ -1476,39 +1679,11 @@ which is ${payment_ammount}
                     time={startTIme}
                     selectedMode={selectedMode}
                 />
-
-                <MonopolyGame
-                    clickedOnBoard={(a) => {
-                        navRef.current?.clickedOnBoard(a);
-                    }}
-                    ref={engineRef}
-                    socket={socket}
-                    players={Array.from(clients.values())}
-                    myTurn={currentId === socket.id}
-                    tradeObj={currentTrade}
-                    tradeApi={{
-                        onSelectPlayer(pId) {
-                            const xplayer = clients.get(pId);
-                            const localPlayer = clients.get(socket.id);
-                            if (xplayer === undefined || localPlayer === undefined) return;
-                            const x = {
-                                turnPlayer: {
-                                    id: localPlayer.id,
-                                    balance: 0,
-                                    prop: [],
-                                },
-                                againstPlayer: {
-                                    id: xplayer.id,
-                                    balance: 0,
-                                    prop: [],
-                                },
-                            };
-                            socket.emit("trade-update", x);
-                        },
-                    }}
-                    selectedMode={selectedMode}
-                />
-            </main>
+                    </div>
+                </div>
+                
+                <p id="floating-clock"></p>
+            </div>
             <NotifyElement ref={notifyRef} />
             <div id="server">
                 <main>
@@ -1625,13 +1800,15 @@ which is ${payment_ammount}
                                             key={i}
                                             className={`player-card ${v.id === socket.id ? 'player-self' : ''} ${playerIsHost ? 'player-host' : ''}`}
                                         >
-                                            <div className="player-avatar">
+                                            <div className="player-avatar" style={{ background: v.color || 'linear-gradient(135deg, #4169e1 0%, #5a82f5 100%)' }}>
                                                 {playerIsHost && <span className="crown-icon">👑</span>}
                                             </div>
-                                            <span className="player-name-text">{v.username}</span>
-                                            {playerIsHost && (
-                                                <span className="host-badge">Host</span>
-                                            )}
+                                            <div className="player-info-wrapper">
+                                                <span className="player-name-text">{v.username}</span>
+                                                {playerIsHost && (
+                                                    <span className="host-badge">Host</span>
+                                                )}
+                                            </div>
                                         </div>
                                 );
                             })}

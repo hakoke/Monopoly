@@ -1312,6 +1312,19 @@ div.entry-simple button:disabled {
     border-radius: 16px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     animation: playerCardEnter 0.4s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.player-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--player-color, transparent);
+    opacity: 0.8;
 }
 
 @keyframes playerCardEnter {
@@ -1340,7 +1353,6 @@ div.entry-simple button:disabled {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #4169e1 0%, #5a82f5 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1348,7 +1360,15 @@ div.entry-simple button:disabled {
     font-weight: bold;
     color: white;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(65, 105, 225, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    position: relative;
+}
+
+.player-info-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .player-card.player-host {
@@ -1358,8 +1378,7 @@ div.entry-simple button:disabled {
 }
 
 .player-card.player-host .player-avatar {
-    background: linear-gradient(135deg, #ffc000 0%, #ffd700 100%);
-    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.6), 0 0 0 2px rgba(255, 215, 0, 0.4);
 }
 
 .crown-icon {
@@ -1392,7 +1411,6 @@ div.entry-simple button:disabled {
 }
 
 .player-name-text {
-    flex: 1;
     font-size: 16px;
     font-weight: 600;
     color: white;

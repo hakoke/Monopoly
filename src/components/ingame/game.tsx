@@ -637,11 +637,10 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
                             st.style.zIndex = "5";
                             switch (state) {
                                 case 0:
-                                    st.style.backgroundColor = "rgba(0,0,0,25%)";
-                                    if (settings !== undefined && settings?.accessibility[4]) {
-                                        st.style.backgroundColor = _player.color;
-                                        st.style.boxShadow = "0px 0px 5px black";
-                                    }
+                                    // Always show player color for owned properties
+                                    st.style.backgroundColor = _player.color || "rgba(0,0,0,25%)";
+                                    st.style.boxShadow = "0px 0px 5px black";
+                                    st.style.border = `2px solid ${_player.color || "transparent"}`;
                                     var payment_ammount = 0;
                                     if (_prp.group === "Railroad") {
                                         const count = _player.properties
@@ -656,11 +655,9 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
 
                                     if (payment_ammount !== 0) {
                                         st.innerHTML = `<p>${payment_ammount}M</p>`;
-                                        st.style.backgroundColor = "rgba(0,0,0,75%)";
-                                        if (settings !== undefined && settings?.accessibility[4]) {
-                                            st.style.backgroundColor = `${_player.color}`;
-                                            st.style.boxShadow = "0px 0px 5px black";
-                                        }
+                                        st.style.backgroundColor = `${_player.color}`;
+                                        st.style.boxShadow = "0px 0px 5px black";
+                                        st.style.border = `2px solid ${_player.color || "transparent"}`;
                                     }
                                     break;
 
