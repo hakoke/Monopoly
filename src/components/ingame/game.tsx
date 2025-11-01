@@ -65,7 +65,6 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
     const [sended, SetSended] = useState<boolean>(false);
     const [showStreet, ShowStreet] = useState<boolean>(false);
     const [advnacedStreet, SetAdvancedStreet] = useState<boolean>(false);
-    const [boardScale, SetBoardScale] = useState<number>(1);
     const [settings, SetSettings] = useState<MonopolySettings>();
     const [timer, SetTimer] = useState<number>(0);
     useEffect(() => {
@@ -475,31 +474,8 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
         },
     }));
 
-    // Calculate responsive board scale based on viewport
-    useEffect(() => {
-        const calculateScale = () => {
-            const boardSize = 900; // Fixed board size in CSS
-            const navWidth = 400; // Nav width from CSS
-            const availableWidth = window.innerWidth - navWidth;
-            const availableHeight = window.innerHeight;
-            
-            // Scale to fit both width and height, with some padding
-            const scaleX = availableWidth / boardSize;
-            const scaleY = availableHeight / boardSize;
-            
-            // Use the smaller scale to ensure board fits
-            const scale = Math.min(scaleX, scaleY, 1) * 0.95; // 5% padding
-            
-            SetBoardScale(scale);
-        };
-        
-        calculateScale();
-        window.addEventListener('resize', calculateScale);
-        
-        return () => {
-            window.removeEventListener('resize', calculateScale);
-        };
-    }, []);
+    // Board now scales automatically with CSS - no manual scaling needed
+    // The GitHub board uses responsive percentage-based grid layout
 
     useEffect(() => {
         // Clicking Street
