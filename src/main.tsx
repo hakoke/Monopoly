@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-// @ts-ignore
+// @ts-ignoree
 import { BrowserRouter as Router, Route, Routes, RouterProvider, createBrowserRouter } from "react-router-dom";
 import Gallery from "./Pages/Galery/gallery.tsx";
 import Home from "./Pages/Home/home.tsx";
