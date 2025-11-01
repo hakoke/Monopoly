@@ -132,12 +132,20 @@ export class Server {
 			this.renderFunction(this.logs);
 		};
 		this.renderFunction = () => {};
+		
+		// Add timeout for peer opening
+		const openTimeout = setTimeout(() => {
+			console.error("PeerJS server failed to open within 10 seconds");
+		}, 10000);
+		
 		this.socket.on("open", async () => {
+			clearTimeout(openTimeout);
 			console.log("PeerJS server opened successfully");
 			idf?.(this);
 		});
 		
 		this.socket.on("error", (err) => {
+			clearTimeout(openTimeout);
 			console.error("PeerJS server error:", err);
 		});
 

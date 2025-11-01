@@ -179,7 +179,20 @@ export default function Home() {
             }
 
             console.log("Starting server creation...");
+            SetDisabled(true);
+            
+            // Show loading message
+            notifyRef.current?.message("Creating game server... Please wait.", "info", 3, undefined, false);
+            
+            // Add timeout to detect if server creation hangs
+            const creationTimeout = setTimeout(() => {
+                console.error("Server creation is taking too long (>10s)");
+                notifyRef.current?.message("⚠️ Server connection failed. PeerJS cloud servers may be unreachable. Please try again or contact support.", "error", 8);
+                SetDisabled(false);
+            }, 10000);
+            
             onlineServer(serverPCount, async (host, server) => {
+                clearTimeout(creationTimeout);
                 console.log("Server created with code:", host);
                 SetDisabled(true);
                 server.code = host;

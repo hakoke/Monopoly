@@ -3,6 +3,6 @@ export default {
 	PEER_SERVER_HOST: undefined, // optional - uses PeerJS cloud servers when undefined
 	PEER_SERVER_PORT: 443, // optional, default 443
 	PEER_SECURE: true, // REQUIRED for HTTPS sites - must be true when served over HTTPS
-	PEER_DEBUG_LEVEL: 0, // optional, default 0
+	PEER_DEBUG_LEVEL: 3, // Enable full debug logging to diagnose connection issues
 };
 
