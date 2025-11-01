@@ -2,6 +2,9 @@ import React from 'react';
 import monopolyJSON from '../../assets/monopoly.json';
 import '../../github-board.css';
 
+// Load FontAwesome for board icons
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 interface Property {
     id: string;
     name: string;
@@ -191,7 +194,7 @@ const GitHubBoard: React.FC = () => {
                     <div className="space chance">
                         <div className="container">
                             <div className="name">Chance</div>
-                            <i className="drawing fa fa-question blue"></i>
+                            <i className="drawing fa fa-question"></i>
                         </div>
                     </div>
                     {renderProperty(23)} {/* Indiana Avenue */}
