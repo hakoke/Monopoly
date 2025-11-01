@@ -2,9 +2,11 @@
 
 .dynamic-board-container {
     aspect-ratio: 1;
-    position: relative;
+    position: absolute;
     width: 100%;
     height: 100%;
+    top: 0;
+    left: 0;
     background-color: #C8E6C9;
     display: grid;
     grid-template-columns: 120px repeat(9, 1fr) 120px;
