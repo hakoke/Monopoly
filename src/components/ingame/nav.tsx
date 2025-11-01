@@ -174,7 +174,7 @@ const MonopolyNav = forwardRef<MonopolyNavRef, MonopolyNavProps>((prop, ref) => 
                         data-tooltip-hover="history"
                         className="button"
                     >
-                        <img src="history.png" alt="" />
+                        <img src="/history.png" alt="" />
                     </div>
                 </div>
                 <div className="lower">
@@ -186,7 +186,7 @@ const MonopolyNav = forwardRef<MonopolyNavRef, MonopolyNavProps>((prop, ref) => 
                             data-tooltip-hover="server"
                             className="button"
                         >
-                            <img src="server.png" alt="" />
+                            <img src="/server.png" alt="" />
                         </div>
                     ) : (
                         <></>

@@ -121,8 +121,8 @@ export async function main(playersCount: number, f?: (host: string, Server: Serv
             socket.on("name", (name: string) => {
                 try {
                     // Don't assign icon yet - let players choose during piece selection
-                    // Icon will be set to player's choice (0-5) which determines their color
-                    const player = new Player(socket.id, name, Array.from(Clients.keys()).length, selectedMode.startingCash);
+                    // Icon set to -1 means "not chosen yet"
+                    const player = new Player(socket.id, name, -1, selectedMode.startingCash);
 
                     // handle current id =>
                     if (currentId === "" || !Array.from(Clients.keys()).includes(currentId)) {

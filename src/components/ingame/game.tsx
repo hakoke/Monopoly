@@ -1443,10 +1443,10 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
                             <img style={{ marginLeft: 10 }} src={RollIcon.replace("public/", "")} />
                         </button>
                         <button data-button-type="pay" data-tooltip-hover="pay" aria-disabled={true}>
-                            <img src="pay1.png" />
+                            <img src="/pay1.png" />
                         </button>
                         <button data-button-type="card" data-tooltip-hover="card" aria-disabled={true}>
-                            <img src="golden-card.png" />
+                            <img src="/golden-card.png" />
                         </button>
                         {prop.selectedMode.AllowDeals ? (
                             <button
@@ -1458,7 +1458,7 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
                                     prop.socket.emit("trade");
                                 }}
                             >
-                                <img src="morgage.png" />
+                                <img src="/morgage.png" />
                             </button>
                         ) : (
                             <></>

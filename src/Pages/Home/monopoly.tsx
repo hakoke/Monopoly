@@ -1425,17 +1425,27 @@ which is ${payment_ammount}
     useEffect(() => {
         if (!showPieceSelection) return;
         
-        const allPlayersChosen = Array.from(clients.values()).every(p => p.icon !== -1);
+        const playersList = Array.from(clients.values());
+        const allPlayersChosen = playersList.length > 0 && playersList.every(p => p.icon !== -1);
         
-        if (allPlayersChosen && clients.size > 0) {
+        console.log("Piece selection check:", {
+            playersCount: playersList.length,
+            playerIcons: playersList.map(p => ({ name: p.username, icon: p.icon })),
+            allChosen: allPlayersChosen
+        });
+        
+        if (allPlayersChosen && playersList.length > 0) {
             // All players ready - start countdown
+            console.log("All players chosen! Starting countdown...");
             setTimeout(() => {
                 setShowPieceSelection(false);
                 
                 function A(n: number) {
                     const p = document.querySelector("p#floating-clock") as HTMLParagraphElement;
-                    p.innerHTML = `${n}`;
-                    p.className = "clocking";
+                    if (p) {
+                        p.innerHTML = `${n}`;
+                        p.className = "clocking";
+                    }
                 }
                 A(3);
                 setTimeout(() => {
@@ -1447,7 +1457,7 @@ which is ${payment_ammount}
                         }, 1000);
                     }, 1000);
                 }, 1000);
-            }, 500);
+            }, 1000);
         }
     }, [clients, showPieceSelection]);
     
@@ -1816,7 +1826,7 @@ which is ${payment_ammount}
                         root.style.transform = "";
                     }}
                 >
-                    <img src="icon.png" alt="" />
+                    <img src="/icon.png" alt="" />
                 </footer>
             </div>
         </>
