@@ -86,8 +86,7 @@ const GitHubBoard: React.FC = () => {
     };
 
     return (
-        <div className="table">
-            <div className="board">
+        <div className="board">
                 {/* Center area */}
                 <div className="center">
                     <div className="community-chest-deck">
@@ -242,7 +241,6 @@ const GitHubBoard: React.FC = () => {
                     </div>
                     {renderProperty(39)} {/* Boardwalk */}
                 </div>
-            </div>
         </div>
     );
 };
