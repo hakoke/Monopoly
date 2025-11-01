@@ -1669,17 +1669,26 @@ which is ${payment_ammount}
                                 const isCurrentTurn = player.id === currentId;
                                 const isMyself = player.id === socket.id;
                                 const playerIsHost = player.id === hostId;
+                                const playerColor = player.color || '#4169e1';
                                 
                                 return (
                                     <div
                                         key={i}
                                         className={`player-game-card ${isCurrentTurn ? 'player-turn' : ''} ${isMyself ? 'player-myself' : ''}`}
+                                        style={{ '--player-color': playerColor } as React.CSSProperties}
                                     >
-                                        <div className="player-color-bar" style={{ background: player.color || '#4169e1' }}></div>
+                                        <div className="player-game-avatar">
+                                            {player.icon !== -1 && (
+                                                <img src={`/p${player.icon}.png`} alt="" className="player-piece-icon" />
+                                            )}
+                                        </div>
                                         <div className="player-game-info">
                                             <div className="player-name-row">
                                                 <span className="player-game-name">{player.username}</span>
-                                                {playerIsHost && <span className="king-icon">👑</span>}
+                                                <div className="player-game-badges">
+                                                    {isMyself && <span className="you-badge">You</span>}
+                                                    {playerIsHost && <span className="host-crown">👑</span>}
+                                                </div>
                                             </div>
                                             <span className="player-balance">${player.balance}</span>
                                         </div>

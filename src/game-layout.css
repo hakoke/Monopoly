@@ -324,74 +324,63 @@
 .player-game-card {
     display: flex;
     align-items: center;
-    gap: 0;
-    padding: 10px 12px;
+    gap: 12px;
+    padding: 12px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+    border-radius: 12px;
     transition: all 0.3s ease;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 
+/* Turn indicator - left color bar ONLY when it's their turn */
 .player-game-card.player-turn {
-    background: rgba(255, 255, 255, 0.08);
-    border-left: 3px solid #ffc000;
-    box-shadow: 0 2px 8px rgba(255, 192, 0, 0.2);
+    background: rgba(255, 255, 255, 0.07);
 }
 
-.player-game-card.player-turn .player-color-bar {
-    width: 3px;
-    opacity: 1;
-    box-shadow: 0 0 8px currentColor;
-}
-
-.player-game-card.player-turn::after {
-    content: '⏵';
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #ffc000;
-    font-size: 12px;
-    opacity: 0.7;
-}
-
-.player-game-card.player-myself {
-    background: rgba(65, 105, 225, 0.06);
-    position: relative;
-}
-
-.player-game-card.player-myself::before {
-    content: 'YOU';
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 9px;
-    font-weight: 700;
-    color: rgba(65, 105, 225, 0.5);
-    letter-spacing: 1px;
-}
-
-.player-game-card.player-turn.player-myself::before {
-    content: 'YOUR TURN';
-    color: rgba(255, 192, 0, 0.6);
-}
-
-.player-game-card.player-turn.player-myself::after {
-    display: none;
-}
-
-.player-color-bar {
-    width: 3px;
-    height: 100%;
+.player-game-card.player-turn::before {
+    content: '';
     position: absolute;
     left: 0;
     top: 0;
     bottom: 0;
-    border-radius: 10px 0 0 10px;
-    opacity: 0.9;
+    width: 4px;
+    background: var(--player-color);
+    border-radius: 12px 0 0 12px;
+    box-shadow: 0 0 12px var(--player-color);
+}
+
+/* Yourself indicator - subtle highlight */
+.player-game-card.player-myself {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.player-game-card.player-myself .player-game-name {
+    color: #e0e0e0;
+}
+
+/* Player avatar - colored circle */
+.player-game-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--player-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+/* Piece icon inside avatar */
+.player-piece-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
 }
 
 .player-game-info {
@@ -399,25 +388,46 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding-left: 10px;
+    min-width: 0;
 }
 
 .player-name-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
 .player-game-name {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     color: white;
     flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.king-icon {
-    font-size: 13px;
-    animation: crownGlow 2s ease-in-out infinite;
+.player-game-badges {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.you-badge {
+    font-size: 9px;
+    font-weight: 700;
+    color: rgba(65, 105, 225, 0.8);
+    background: rgba(65, 105, 225, 0.15);
+    padding: 3px 8px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid rgba(65, 105, 225, 0.3);
+}
+
+.host-crown {
+    font-size: 14px;
+    filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.4));
 }
 
 .player-balance {
@@ -674,31 +684,43 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 120px;
+    font-size: 160px;
     font-weight: 900;
     color: white;
     margin: 0;
-    z-index: 9999;
-    text-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+    z-index: 99999;
+    text-shadow: 
+        0 0 40px rgba(65, 105, 225, 0.8),
+        0 0 80px rgba(65, 105, 225, 0.6),
+        0 4px 20px rgba(0, 0, 0, 0.9);
     pointer-events: none;
+    font-family: 'Josefin Sans', sans-serif;
 }
 
 #floating-clock.clocking {
-    animation: clockPulse 1s ease-in-out;
+    animation: clockPulse 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes clockPulse {
     0% {
-        transform: translate(-50%, -50%) scale(0.5);
+        transform: translate(-50%, -50%) scale(0.3);
         opacity: 0;
+        filter: blur(10px);
     }
-    50% {
-        transform: translate(-50%, -50%) scale(1.2);
+    40% {
+        transform: translate(-50%, -50%) scale(1.3);
         opacity: 1;
+        filter: blur(0px);
+    }
+    70% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+        filter: blur(0px);
     }
     100% {
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -50%) scale(0.9);
         opacity: 0;
+        filter: blur(5px);
     }
 }
 

@@ -581,7 +581,7 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
                     const secondDiv = document.createElement("div");
                     secondDiv.setAttribute("data-tooltip-hover", x.username);
                     const image = document.createElement("img");
-                    image.src = `./p${icon}.png`;
+                    image.src = `/p${icon}.png`;
                     secondDiv.appendChild(image);
                     element.appendChild(secondDiv);
                     if (injail) {
