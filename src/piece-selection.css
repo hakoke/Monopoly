@@ -207,6 +207,130 @@
     background: linear-gradient(135deg, #4169e1 0%, #5a82f5 100%);
 }
 
+/* Player Selection Status */
+.player-selection-status {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 0 0 16px 0;
+    text-align: center;
+}
+
+.status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.status-item.status-ready {
+    background: rgba(80, 200, 120, 0.08);
+    border-color: rgba(80, 200, 120, 0.3);
+}
+
+.status-item.status-me {
+    border-color: rgba(65, 105, 225, 0.4);
+    box-shadow: 0 0 0 2px rgba(65, 105, 225, 0.15);
+}
+
+.status-piece-preview {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.status-piece-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.status-waiting-dot {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-waiting-dot::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 192, 0, 0.4);
+    animation: dotPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+    0%, 100% {
+        opacity: 0.4;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.3);
+    }
+}
+
+.status-name {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-crown {
+    font-size: 12px;
+}
+
+.status-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-ready {
+    color: #50c878;
+    background: rgba(80, 200, 120, 0.2);
+    border: 1px solid rgba(80, 200, 120, 0.4);
+}
+
+.badge-pending {
+    color: #ffc000;
+    background: rgba(255, 192, 0, 0.2);
+    border: 1px solid rgba(255, 192, 0, 0.4);
+}
+
 @media (max-width: 600px) {
     .pieces-grid {
         grid-template-columns: repeat(2, 1fr);

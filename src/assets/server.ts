@@ -120,14 +120,9 @@ export async function main(playersCount: number, f?: (host: string, Server: Serv
             socket.emit("state", Clients.size < maxPlayers && !gameStarted ?  0 : gameStarted ? 1 : 2)
             socket.on("name", (name: string) => {
                 try {
-                    // Assign random icon (0-5) for player color
-                    const usedIcons = Array.from(Clients.values()).map(c => c.player.icon);
-                    const availableIcons = [0, 1, 2, 3, 4, 5].filter(icon => !usedIcons.includes(icon));
-                    const randomIcon = availableIcons.length > 0 
-                        ? availableIcons[Math.floor(Math.random() * availableIcons.length)]
-                        : Math.floor(Math.random() * 6);
-                    
-                    const player = new Player(socket.id, name, randomIcon, selectedMode.startingCash);
+                    // Don't assign icon yet - let players choose during piece selection
+                    // Icon will be set to player's choice (0-5) which determines their color
+                    const player = new Player(socket.id, name, Array.from(Clients.keys()).length, selectedMode.startingCash);
 
                     // handle current id =>
                     if (currentId === "" || !Array.from(Clients.keys()).includes(currentId)) {

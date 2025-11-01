@@ -1413,25 +1413,43 @@ which is ${payment_ammount}
         // Emit icon selection to server
         socket.emit('player-icon', selectedPiece);
         
-        setShowPieceSelection(false);
-        
-        // Start countdown
-        function A(n: number) {
-            const p = document.querySelector("p#floating-clock") as HTMLParagraphElement;
-            p.innerHTML = `${n}`;
-            p.className = "clocking";
+        // Update local client immediately
+        const myPlayer = clients.get(socket.id);
+        if (myPlayer) {
+            myPlayer.icon = selectedPiece;
+            SetClients(new Map(clients));
         }
-        A(3);
-        setTimeout(() => {
-            A(2);
-            setTimeout(() => {
-                A(1);
-                setTimeout(() => {
-                    SetGameStartedDisplay(true);
-                }, 1000);
-            }, 1000);
-        }, 1000);
     };
+    
+    // Check if all players have chosen their pieces
+    useEffect(() => {
+        if (!showPieceSelection) return;
+        
+        const allPlayersChosen = Array.from(clients.values()).every(p => p.icon !== -1);
+        
+        if (allPlayersChosen && clients.size > 0) {
+            // All players ready - start countdown
+            setTimeout(() => {
+                setShowPieceSelection(false);
+                
+                function A(n: number) {
+                    const p = document.querySelector("p#floating-clock") as HTMLParagraphElement;
+                    p.innerHTML = `${n}`;
+                    p.className = "clocking";
+                }
+                A(3);
+                setTimeout(() => {
+                    A(2);
+                    setTimeout(() => {
+                        A(1);
+                        setTimeout(() => {
+                            SetGameStartedDisplay(true);
+                        }, 1000);
+                    }, 1000);
+                }, 1000);
+            }, 500);
+        }
+    }, [clients, showPieceSelection]);
     
     return showPieceSelection ? (
         <>
@@ -1439,11 +1457,12 @@ which is ${payment_ammount}
                 <div className="piece-selection-modal">
                     <h2 className="piece-selection-title">Choose Your Game Piece</h2>
                     <p className="piece-selection-subtitle">Select the piece you want to play with</p>
+                    
                     <div className="pieces-grid">
                         {[0, 1, 2, 3, 4, 5].map((pieceNum) => {
-                            const pieceColor = clients.get(socket.id)?.color || '#4169e1';
                             const isSelected = selectedPiece === pieceNum;
-                            const isTaken = Array.from(clients.values()).some(p => p.icon === pieceNum && p.id !== socket.id);
+                            const isTaken = Array.from(clients.values()).some(p => p.icon === pieceNum && p.id !== socket.id && p.icon !== -1);
+                            const takenByPlayer = Array.from(clients.values()).find(p => p.icon === pieceNum && p.id !== socket.id);
                             
                             return (
                                 <button
@@ -1451,24 +1470,55 @@ which is ${payment_ammount}
                                     className={`piece-option ${isSelected ? 'piece-selected' : ''} ${isTaken ? 'piece-taken' : ''}`}
                                     onClick={() => !isTaken && setSelectedPiece(pieceNum)}
                                     disabled={isTaken}
-                                    style={{ '--piece-color': pieceColor } as React.CSSProperties}
                                 >
                                     <img src={`/p${pieceNum}.png`} alt={`Piece ${pieceNum + 1}`} />
-                                    {isTaken && <span className="taken-label">Taken</span>}
+                                    {isTaken && takenByPlayer && <span className="taken-label">Taken by {takenByPlayer.username}</span>}
                                 </button>
                             );
                         })}
                     </div>
-                    <button
-                        className="confirm-piece-btn"
-                        onClick={confirmPieceSelection}
-                        disabled={selectedPiece === null}
-                    >
-                        {selectedPiece === null ? 'Select a Piece' : 'Confirm & Start Game'}
-                    </button>
+                    
+                    {selectedPiece !== null && (
+                        <button
+                            className="confirm-piece-btn"
+                            onClick={confirmPieceSelection}
+                        >
+                            <span>✓</span> Confirm Selection
+                        </button>
+                    )}
+                    
+                    <div className="player-selection-status">
+                        <h4 className="status-title">Player Status</h4>
+                        <div className="status-list">
+                            {Array.from(clients.values()).map((player, i) => {
+                                const hasChosen = player.icon !== -1;
+                                const isMe = player.id === socket.id;
+                                const playerIsHost = player.id === hostId;
+                                
+                                return (
+                                    <div key={i} className={`status-item ${hasChosen ? 'status-ready' : 'status-pending'} ${isMe ? 'status-me' : ''}`}>
+                                        {hasChosen && (
+                                            <div className="status-piece-preview">
+                                                <img src={`/p${player.icon}.png`} alt="" />
+                                            </div>
+                                        )}
+                                        {!hasChosen && <div className="status-waiting-dot"></div>}
+                                        <span className="status-name">
+                                            {player.username}
+                                            {playerIsHost && <span className="status-crown">👑</span>}
+                                        </span>
+                                        <span className={`status-badge ${hasChosen ? 'badge-ready' : 'badge-pending'}`}>
+                                            {hasChosen ? '✓ Ready' : 'Choosing...'}
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
                 </div>
             </div>
             <NotifyElement ref={notifyRef} />
+            <p id="floating-clock"></p>
         </>
     ) : gameStartedDisplay ? (
         <>
@@ -1858,7 +1908,6 @@ which is ${payment_ammount}
                                             className={`player-card ${v.id === socket.id ? 'player-self' : ''} ${playerIsHost ? 'player-host' : ''}`}
                                         >
                                             <div className="player-avatar" style={{ background: v.color || 'linear-gradient(135deg, #4169e1 0%, #5a82f5 100%)' }}>
-                                                {playerIsHost && <span className="crown-icon">👑</span>}
                                             </div>
                                             <div className="player-info-wrapper">
                                                 <span className="player-name-text">{v.username}</span>
