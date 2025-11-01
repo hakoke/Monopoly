@@ -1,0 +1,16 @@
+{
+  "name": "monopoly-peerjs-server",
+  "version": "1.0.0",
+  "description": "PeerJS signaling server for Monopoly game",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "peer": "^1.0.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
+
