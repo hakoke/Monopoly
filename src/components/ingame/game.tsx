@@ -10,6 +10,7 @@ import ChacneCard, { ChanceDisplayInfo } from "./specialCards.tsx";
 import { MonopolyCookie, MonopolySettings, GameTrading, MonopolyMode } from "../../assets/types.ts";
 import Slider from "../utils/slider.tsx";
 import { CookieManager } from "../../assets/cookieManager.ts";
+import DynamicBoard from "./DynamicBoard.tsx";
 interface MonopolyGameProps {
     players: Array<Player>;
     myTurn: boolean;
@@ -529,7 +530,7 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
         var animate = () => {
             for (const x of prop.players.filter((v) => v.balance >= 0)) {
                 const location = x.position;
-                const icon = x.icon + 1;
+                const icon = x.icon;
                 const injail = x.isInJail;
 
                 const elementSearch = document.querySelector(`div.player[player-id="${x.id}"]`);
@@ -597,7 +598,9 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
 
             function propertiesDisplay() {
                 const folder = document.getElementById("display-houses") as HTMLDivElement;
-                // remove all older proprerties!
+                const ownershipFolder = document.getElementById("property-ownership-bars") as HTMLDivElement;
+                
+                // Clear all property displays
                 const allStreets = Array.from(folder.querySelectorAll("div.street-houses"));
                 for (const _st of allStreets) {
                     const st = _st as HTMLDivElement;
@@ -611,54 +614,50 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
                     st.innerHTML = "";
                     st.setAttribute("data-tooltip-hover", "");
                     st.style.zIndex = "unset";
-                    st.style.boxShadow = "";
+                    st.style.boxShadow = "none";
+                    st.style.border = "none";
                 }
+                
+                // Clear all ownership bars
+                const allOwnershipBars = Array.from(ownershipFolder.querySelectorAll("div.ownership-bar"));
+                for (const bar of allOwnershipBars) {
+                    (bar as HTMLDivElement).style.backgroundColor = "transparent";
+                    (bar as HTMLDivElement).setAttribute("data-tooltip-hover", "");
+                    (bar as HTMLDivElement).onclick = () => {};
+                    (bar as HTMLDivElement).style.cursor = "default";
+                }
+                
+                // Update ownership and buildings for each player
                 for (const _player of prop.players) {
                     for (const _prp of _player.properties) {
                         const location = _prp.posistion;
                         const state = _prp.count;
 
-                        const queryElement = folder.querySelector(`div.street-houses[data-position="${location}"`);
-                        if (queryElement != null) {
-                            // add new propertie
-                            const st = queryElement as HTMLDivElement;
-                            st.setAttribute("data-tooltip-hover", _player.username);
-
-                            st.onclick = () => {
+                        // Update ownership color bar
+                        const ownershipBar = ownershipFolder.querySelector(`div.ownership-bar[data-position="${location}"]`) as HTMLDivElement;
+                        if (ownershipBar) {
+                            ownershipBar.style.backgroundColor = _player.color;
+                            ownershipBar.setAttribute("data-tooltip-hover", _player.username);
+                            ownershipBar.style.cursor = "pointer";
+                            ownershipBar.onclick = () => {
                                 const element = document.querySelector(`div.player[player-id="${_player.id}"]`) as HTMLDivElement;
-                                element.style.animation = "spin2 1s cubic-bezier(.21, 1.57, .55, 1) infinite";
-                                setTimeout(() => {
-                                    element.style.animation = "";
-                                }, 1 * 1000);
+                                if (element) {
+                                    element.style.animation = "spin2 1s cubic-bezier(.21, 1.57, .55, 1) infinite";
+                                    setTimeout(() => {
+                                        element.style.animation = "";
+                                    }, 1 * 1000);
+                                }
                             };
+                        }
 
-                            st.style.cursor = "pointer";
-
-                            st.style.zIndex = "5";
+                        // Update houses/hotels display
+                        const queryElement = folder.querySelector(`div.street-houses[data-position="${location}"]`);
+                        if (queryElement != null) {
+                            const st = queryElement as HTMLDivElement;
+                            
                             switch (state) {
                                 case 0:
-                                    // Always show player color for owned properties
-                                    st.style.backgroundColor = _player.color || "rgba(0,0,0,25%)";
-                                    st.style.boxShadow = "0px 0px 5px black";
-                                    st.style.border = `2px solid ${_player.color || "transparent"}`;
-                                    var payment_ammount = 0;
-                                    if (_prp.group === "Railroad") {
-                                        const count = _player.properties
-                                            .filter((v) => v.group === "Railroad")
-                                            .filter((v) => v.morgage === undefined || (v.morgage !== undefined && v.morgage === false)).length;
-                                        const rents = [0, 25, 50, 100, 200];
-                                        var payment_ammount = rents[count];
-                                    } else if (_prp.group === "Utilities" && _prp.rent) {
-                                        const multy_ = _player.properties.filter((v) => v.group === "Utilities").length === 2 ? 10 : 4;
-                                        payment_ammount = _prp.rent * multy_;
-                                    }
-
-                                    if (payment_ammount !== 0) {
-                                        st.innerHTML = `<p>${payment_ammount}M</p>`;
-                                        st.style.backgroundColor = `${_player.color}`;
-                                        st.style.boxShadow = "0px 0px 5px black";
-                                        st.style.border = `2px solid ${_player.color || "transparent"}`;
-                                    }
+                                    // No buildings - ownership shown via color bar only
                                     break;
 
                                 case 1:
@@ -745,6 +744,7 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
                         }}
                         id="locations"
                     >
+                        <DynamicBoard />
                         <div id="display-houses">
                             <div
                                 data-position="39"
@@ -1008,6 +1008,43 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
                                     left: "83%",
                                 }}
                             ></div>
+                        </div>
+                        <div id="property-ownership-bars">
+                            {/* Bottom row - rotate 1 */}
+                            <div className="ownership-bar" data-position="1" data-rotate="1" style={{ top: "91.5%", left: "83%", width: "60px", height: "8px" }}></div>
+                            <div className="ownership-bar" data-position="3" data-rotate="1" style={{ top: "91.5%", left: "66.5%", width: "60px", height: "8px" }}></div>
+                            <div className="ownership-bar" data-position="5" data-rotate="1" style={{ top: "91.5%", left: "50%", width: "60px", height: "8px" }}></div>
+                            <div className="ownership-bar" data-position="6" data-rotate="1" style={{ top: "91.5%", left: "41.75%", width: "60px", height: "8px" }}></div>
+                            <div className="ownership-bar" data-position="8" data-rotate="1" style={{ top: "91.5%", left: "25.5%", width: "60px", height: "8px" }}></div>
+                            <div className="ownership-bar" data-position="9" data-rotate="1" style={{ top: "91.5%", left: "17.25%", width: "60px", height: "8px" }}></div>
+                            
+                            {/* Left side - rotate 2 */}
+                            <div className="ownership-bar" data-position="11" data-rotate="2" style={{ top: "83%", left: "8.5%", width: "8px", height: "60px" }}></div>
+                            <div className="ownership-bar" data-position="12" data-rotate="2" style={{ top: "74.75%", left: "8.5%", width: "8px", height: "60px" }}></div>
+                            <div className="ownership-bar" data-position="13" data-rotate="2" style={{ top: "66.5%", left: "8.5%", width: "8px", height: "60px" }}></div>
+                            <div className="ownership-bar" data-position="14" data-rotate="2" style={{ top: "58.25%", left: "8.5%", width: "8px", height: "60px" }}></div>
+                            <div className="ownership-bar" data-position="15" data-rotate="2" style={{ top: "50%", left: "8.5%", width: "8px", height: "60px" }}></div>
+                            <div className="ownership-bar" data-position="16" data-rotate="2" style={{ top: "41.75%", left: "8.5%", width: "8px", height: "60px" }}></div>
+                            <div className="ownership-bar" data-position="18" data-rotate="2" style={{ top: "25.5%", left: "8.5%", width: "8px", height: "60px" }}></div>
+                            <div className="ownership-bar" data-position="19" data-rotate="2" style={{ top: "17.25%", left: "8.5%", width: "8px", height: "60px" }}></div>
+                            
+                            {/* Top row - rotate 3 */}
+                            <div className="ownership-bar" data-position="21" data-rotate="3" style={{ top: "8.5%", left: "17.25%", width: "60px", height: "8px" }}></div>
+                            <div className="ownership-bar" data-position="23" data-rotate="3" style={{ top: "8.5%", left: "33.5%", width: "60px", height: "8px" }}></div>
+                            <div className="ownership-bar" data-position="24" data-rotate="3" style={{ top: "8.5%", left: "41.75%", width: "60px", height: "8px" }}></div>
+                            <div className="ownership-bar" data-position="25" data-rotate="3" style={{ top: "8.5%", left: "50%", width: "60px", height: "8px" }}></div>
+                            <div className="ownership-bar" data-position="26" data-rotate="3" style={{ top: "8.5%", left: "58.25%", width: "60px", height: "8px" }}></div>
+                            <div className="ownership-bar" data-position="27" data-rotate="3" style={{ top: "8.5%", left: "66.5%", width: "60px", height: "8px" }}></div>
+                            <div className="ownership-bar" data-position="28" data-rotate="3" style={{ top: "8.5%", left: "74.75%", width: "60px", height: "8px" }}></div>
+                            <div className="ownership-bar" data-position="29" data-rotate="3" style={{ top: "8.5%", left: "83%", width: "60px", height: "8px" }}></div>
+                            
+                            {/* Right side - rotate 4 */}
+                            <div className="ownership-bar" data-position="31" data-rotate="4" style={{ top: "17.25%", left: "91.5%", width: "8px", height: "60px" }}></div>
+                            <div className="ownership-bar" data-position="32" data-rotate="4" style={{ top: "25.5%", left: "91.5%", width: "8px", height: "60px" }}></div>
+                            <div className="ownership-bar" data-position="34" data-rotate="4" style={{ top: "41.75%", left: "91.5%", width: "8px", height: "60px" }}></div>
+                            <div className="ownership-bar" data-position="35" data-rotate="4" style={{ top: "50%", left: "91.5%", width: "8px", height: "60px" }}></div>
+                            <div className="ownership-bar" data-position="37" data-rotate="4" style={{ top: "66.5%", left: "91.5%", width: "8px", height: "60px" }}></div>
+                            <div className="ownership-bar" data-position="39" data-rotate="4" style={{ top: "83%", left: "91.5%", width: "8px", height: "60px" }}></div>
                         </div>
                         <div id="display-streets">
                             <div

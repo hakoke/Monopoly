@@ -54,8 +54,6 @@ export class Player {
 
     get color() {
         switch (this.icon) {
-            case 0:
-                return "#E0115F"; // Ruby Red
             case 1:
                 return "#4169e1"; // Royal Blue
             case 2:
@@ -66,6 +64,8 @@ export class Player {
                 return "#9B59B6"; // Purple
             case 5:
                 return "#FF7F50"; // Coral Orange
+            case 6:
+                return "#E0115F"; // Ruby Red
             default:
                 return "#4169e1"; // Default to Blue
         }

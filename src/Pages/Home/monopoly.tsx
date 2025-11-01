@@ -1469,7 +1469,7 @@ which is ${payment_ammount}
                     <p className="piece-selection-subtitle">Select the piece you want to play with</p>
                     
                     <div className="pieces-grid">
-                        {[0, 1, 2, 3, 4, 5].map((pieceNum) => {
+                        {[6, 1, 2, 3, 4, 5].map((pieceNum) => {
                             const isSelected = selectedPiece === pieceNum;
                             const isTaken = Array.from(clients.values()).some(p => p.icon === pieceNum && p.id !== socket.id && p.icon !== -1);
                             const takenByPlayer = Array.from(clients.values()).find(p => p.icon === pieceNum && p.id !== socket.id);

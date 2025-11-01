@@ -336,6 +336,12 @@ export async function main(playersCount: number, f?: (host: string, Server: Serv
                     const client = Clients.get(socket.id);
                     if (client === undefined) return;
                     
+                    // Validate icon number (1-6, not 0)
+                    if (iconNum < 1 || iconNum > 6) {
+                        server.logFunction(`Invalid icon number: ${iconNum}`);
+                        return;
+                    }
+                    
                     client.player.icon = iconNum;
                     Clients.set(socket.id, client);
                     

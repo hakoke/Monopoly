@@ -1,0 +1,313 @@
+/* Dynamic Monopoly Board Styles */
+
+.dynamic-board-container {
+    aspect-ratio: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #C8E6C9;
+    display: grid;
+    grid-template-columns: 120px repeat(9, 1fr) 120px;
+    grid-template-rows: 120px repeat(9, 1fr) 120px;
+    box-shadow: 0px 0px 0px 3px black;
+}
+
+/* Center area styling */
+.board-center {
+    grid-column: 2 / 11;
+    grid-row: 2 / 11;
+    background: linear-gradient(135deg, #C8E6C9 0%, #A5D6A7 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Kabel', sans-serif;
+    position: relative;
+}
+
+.board-title {
+    font-size: 48px;
+    font-weight: bold;
+    color: #d42426;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    transform: rotate(-45deg);
+}
+
+/* Corner tiles */
+.tile-corner {
+    width: 120px;
+    height: 120px;
+    border: 2px solid #000;
+    background-color: #C8E6C9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.tile-corner.go {
+    grid-column: 11;
+    grid-row: 11;
+    background: linear-gradient(135deg, #d42426 0%, #b91c1e 50%, #8b1415 100%);
+}
+
+.tile-corner.jail {
+    grid-column: 1;
+    grid-row: 11;
+    background-color: #F5A623;
+}
+
+.tile-corner.free-parking {
+    grid-column: 1;
+    grid-row: 1;
+    background-color: #E8F5E9;
+}
+
+.tile-corner.go-to-jail {
+    grid-column: 11;
+    grid-row: 1;
+    background: linear-gradient(135deg, #FF6B6B 0%, #d42426 100%);
+}
+
+/* Corner tile text */
+.corner-content {
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    z-index: 2;
+    position: relative;
+}
+
+.tile-corner.go .corner-content {
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+.tile-corner.go .arrow {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 40px;
+    transform: rotate(-45deg);
+}
+
+/* Property tiles - Base styles */
+.tile-property,
+.tile-railroad,
+.tile-utility,
+.tile-special {
+    border: 2px solid #000;
+    background-color: #C8E6C9;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Bottom row properties (positions 1-9) */
+.tile-bottom {
+    grid-row: 11;
+    flex-direction: column;
+}
+
+/* Left side properties (positions 11-19) */
+.tile-left {
+    grid-column: 1;
+    flex-direction: row-reverse;
+    writing-mode: vertical-lr;
+}
+
+/* Top row properties (positions 21-29) */
+.tile-top {
+    grid-row: 1;
+    flex-direction: column-reverse;
+}
+
+/* Right side properties (positions 31-39) */
+.tile-right {
+    grid-column: 11;
+    flex-direction: row;
+    writing-mode: vertical-lr;
+}
+
+/* Color bars for properties */
+.property-color-bar {
+    height: 30px;
+    width: 100%;
+    border-bottom: 2px solid #000;
+    flex-shrink: 0;
+}
+
+.tile-left .property-color-bar,
+.tile-right .property-color-bar {
+    height: 100%;
+    width: 30px;
+    border-bottom: none;
+    border-right: 2px solid #000;
+}
+
+/* Property content */
+.property-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    background-color: #C8E6C9;
+    text-align: center;
+    writing-mode: initial;
+}
+
+.property-name {
+    font-size: 11px;
+    font-weight: bold;
+    color: #000;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0 2px;
+    line-height: 1.1;
+    word-wrap: break-word;
+    max-width: 100%;
+}
+
+.tile-left .property-name,
+.tile-right .property-name {
+    writing-mode: horizontal-tb;
+    transform: rotate(0deg);
+}
+
+.property-price {
+    font-size: 10px;
+    color: #000;
+    margin-top: auto;
+    font-weight: bold;
+}
+
+/* Railroad styling */
+.tile-railroad .property-color-bar {
+    background-color: #000;
+}
+
+.tile-railroad .railroad-icon {
+    font-size: 24px;
+    margin: 5px 0;
+}
+
+/* Utility styling */
+.tile-utility .property-content {
+    justify-content: space-around;
+}
+
+.tile-utility .utility-icon {
+    font-size: 32px;
+    margin: 5px 0;
+}
+
+/* Special tiles (Chance, Community Chest, Tax) */
+.tile-special .special-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 5px;
+    background-color: #C8E6C9;
+}
+
+.special-icon {
+    font-size: 32px;
+    margin-bottom: 5px;
+}
+
+.special-text {
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    word-wrap: break-word;
+    writing-mode: initial;
+}
+
+.tile-left .special-text,
+.tile-right .special-text {
+    writing-mode: horizontal-tb;
+}
+
+/* Chance card styling */
+.tile-chance {
+    background: linear-gradient(135deg, #FF6B6B 0%, #d42426 100%);
+}
+
+.tile-chance .special-content {
+    background: transparent;
+}
+
+.tile-chance .special-text {
+    color: white;
+}
+
+/* Community Chest styling */
+.tile-community-chest {
+    background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+}
+
+.tile-community-chest .special-content {
+    background: transparent;
+}
+
+.tile-community-chest .special-text {
+    color: white;
+}
+
+/* Tax tiles */
+.tile-tax .special-content {
+    background-color: #C8E6C9;
+}
+
+.tile-tax .special-text {
+    color: #000;
+}
+
+/* Positioning for each tile */
+.pos-1 { grid-column: 10; grid-row: 11; }
+.pos-2 { grid-column: 9; grid-row: 11; }
+.pos-3 { grid-column: 8; grid-row: 11; }
+.pos-4 { grid-column: 7; grid-row: 11; }
+.pos-5 { grid-column: 6; grid-row: 11; }
+.pos-6 { grid-column: 5; grid-row: 11; }
+.pos-7 { grid-column: 4; grid-row: 11; }
+.pos-8 { grid-column: 3; grid-row: 11; }
+.pos-9 { grid-column: 2; grid-row: 11; }
+
+.pos-11 { grid-column: 1; grid-row: 10; }
+.pos-12 { grid-column: 1; grid-row: 9; }
+.pos-13 { grid-column: 1; grid-row: 8; }
+.pos-14 { grid-column: 1; grid-row: 7; }
+.pos-15 { grid-column: 1; grid-row: 6; }
+.pos-16 { grid-column: 1; grid-row: 5; }
+.pos-17 { grid-column: 1; grid-row: 4; }
+.pos-18 { grid-column: 1; grid-row: 3; }
+.pos-19 { grid-column: 1; grid-row: 2; }
+
+.pos-21 { grid-column: 2; grid-row: 1; }
+.pos-22 { grid-column: 3; grid-row: 1; }
+.pos-23 { grid-column: 4; grid-row: 1; }
+.pos-24 { grid-column: 5; grid-row: 1; }
+.pos-25 { grid-column: 6; grid-row: 1; }
+.pos-26 { grid-column: 7; grid-row: 1; }
+.pos-27 { grid-column: 8; grid-row: 1; }
+.pos-28 { grid-column: 9; grid-row: 1; }
+.pos-29 { grid-column: 10; grid-row: 1; }
+
+.pos-31 { grid-column: 11; grid-row: 2; }
+.pos-32 { grid-column: 11; grid-row: 3; }
+.pos-33 { grid-column: 11; grid-row: 4; }
+.pos-34 { grid-column: 11; grid-row: 5; }
+.pos-35 { grid-column: 11; grid-row: 6; }
+.pos-36 { grid-column: 11; grid-row: 7; }
+.pos-37 { grid-column: 11; grid-row: 8; }
+.pos-38 { grid-column: 11; grid-row: 9; }
+.pos-39 { grid-column: 11; grid-row: 10; }
+
