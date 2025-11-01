@@ -1,21 +1,7 @@
-/* GitHub Monopoly Board Styles - ORIGINAL */
+/* GitHub Monopoly Board Styles - INTEGRATED */
 @import url("https://fonts.googleapis.com/css?family=Oswald:300,400,500");
 
-body {
-    font-family: "Oswald", sans-serif;
-    font-weight: 400;
-    font-size: 10px;
-    color: #080808;
-    text-transform: uppercase;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    margin: 0;
-}
-
-* {
-    box-sizing: border-box;
-}
+/* Removed global body and * styles to avoid conflicts with game styles */
 
 .dark-purple {
     background: #5e3577;
@@ -49,16 +35,30 @@ h1, h2, h3, h4, h5, h6 {
     background: #5a6dba;
 }
 
-.board {
+/* Make GitHubBoard work within game's existing .board container */
+.board .board {
     display: grid;
     grid-template-columns: 125px repeat(9, 80px) 125px;
     grid-template-rows: 125px repeat(9, 80px) 125px;
     grid-gap: 2px;
-    margin: 50px auto;
-    width: 994px;
-    height: 994px;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    max-width: 994px;
+    max-height: 994px;
+    aspect-ratio: 1;
     background: #080808;
     border: 2px solid #080808;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: "Oswald", sans-serif;
+    font-weight: 400;
+    font-size: 10px;
+    color: #080808;
+    text-transform: uppercase;
+    box-sizing: border-box;
 }
 
 .center {
