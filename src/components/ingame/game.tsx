@@ -735,13 +735,17 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
     return (
         <>
             <div className="game" style={prop.tradeObj !== undefined ? { translate: "0px -100%" } : {}}>
-                <div style={{ overflowY: "hidden" }}>
+                <div style={{ 
+                    width: "100%", 
+                    height: "100%", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center",
+                    position: "relative"
+                }}>
                     <div id="dice-panel" data-show={showDice}></div>
                     <div
                         className="board"
-                        style={{
-                            transform: `translateX(-50%) translateY(-50%) scale(${boardScale})`,
-                        }}
                         id="locations"
                     >
                         <GitHubBoard />
