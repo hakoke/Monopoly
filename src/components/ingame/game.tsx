@@ -10,7 +10,7 @@ import ChacneCard, { ChanceDisplayInfo } from "./specialCards.tsx";
 import { MonopolyCookie, MonopolySettings, GameTrading, MonopolyMode } from "../../assets/types.ts";
 import Slider from "../utils/slider.tsx";
 import { CookieManager } from "../../assets/cookieManager.ts";
-import DynamicBoard from "./DynamicBoard.tsx";
+import GitHubBoard from "./GitHubBoard.tsx";
 interface MonopolyGameProps {
     players: Array<Player>;
     myTurn: boolean;
@@ -744,7 +744,7 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
                         }}
                         id="locations"
                     >
-                        <DynamicBoard />
+                        <GitHubBoard />
                         <div id="display-houses">
                             <div
                                 data-position="39"
