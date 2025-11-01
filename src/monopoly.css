@@ -874,10 +874,10 @@ div.board {
     transition: transform 0.1s ease-out;
 }
 
-/* Adjust board size for new layout */
+/* Adjust board size for new layout - FILL THE CENTER */
 .game-layout .board {
-    width: min(calc(100vh - 40px), calc(100vw - 640px));
-    max-width: 100%;
+    width: min(95vh, calc(100vw - 640px));
+    max-width: none;
 }
 
 /* Ensure proper containment in game center */

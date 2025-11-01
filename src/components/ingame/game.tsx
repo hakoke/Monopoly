@@ -563,11 +563,11 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
                         const secondDiv = document.createElement("div");
                         secondDiv.setAttribute("data-tooltip-hover", x.username);
                         const image = document.createElement("img");
-                        image.src = `./p${icon}.png`;
+                        image.src = `/p${icon}.png`;
                         secondDiv.appendChild(image);
 
                         const jimage = document.createElement("img");
-                        jimage.src = `./jail.png`;
+                        jimage.src = `/jail.png`;
                         jimage.className = "jailIcon";
                         secondDiv.appendChild(jimage);
                         elementSearch.appendChild(secondDiv);
@@ -586,7 +586,7 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
                     element.appendChild(secondDiv);
                     if (injail) {
                         const jimage = document.createElement("img");
-                        jimage.src = `./jail.png`;
+                        jimage.src = `/jail.png`;
                         jimage.className = "jailIcon";
                         element.appendChild(jimage);
                     }

@@ -1564,40 +1564,38 @@ which is ${payment_ammount}
                         </div>
                     </div>
 
-                    {/* Share Link */}
-                    {server !== undefined && (
-                        <div className="share-section">
-                            <h3 className="share-title">Share this game</h3>
-                            <div className="share-url-display">
-                                <input
-                                    type="text"
-                                    readOnly
-                                    value={window.location.origin + (import.meta.env.BASE_URL || "/").replace(/\/$/, "") + `/game/${server.code}`}
-                                    className="share-url-input"
-                                    id="game-share-link"
-                                    onClick={(e) => e.currentTarget.select()}
-                                />
-                            </div>
-                            <button
-                                className="share-copy-button"
-                                onClick={(e) => {
-                                    const input = document.getElementById("game-share-link") as HTMLInputElement;
-                                    input.select();
-                                    navigator.clipboard.writeText(input.value);
-                                    const btn = e.currentTarget;
-                                    const originalHTML = btn.innerHTML;
-                                    btn.innerHTML = '<span class="copy-check">✓</span> Copied!';
-                                    btn.classList.add('copied');
-                                    setTimeout(() => {
-                                        btn.innerHTML = originalHTML;
-                                        btn.classList.remove('copied');
-                                    }, 2000);
-                                }}
-                            >
-                                <span className="copy-icon">📋</span> Copy Link
-                            </button>
+                    {/* Share Link - Always visible */}
+                    <div className="share-section">
+                        <h3 className="share-title">Share this game</h3>
+                        <div className="share-url-display">
+                            <input
+                                type="text"
+                                readOnly
+                                value={window.location.href}
+                                className="share-url-input"
+                                id="game-share-link"
+                                onClick={(e) => e.currentTarget.select()}
+                            />
                         </div>
-                    )}
+                        <button
+                            className="share-copy-button"
+                            onClick={(e) => {
+                                const input = document.getElementById("game-share-link") as HTMLInputElement;
+                                input.select();
+                                navigator.clipboard.writeText(input.value);
+                                const btn = e.currentTarget;
+                                const originalHTML = btn.innerHTML;
+                                btn.innerHTML = '<span class="copy-check">✓</span> Copied!';
+                                btn.classList.add('copied');
+                                setTimeout(() => {
+                                    btn.innerHTML = originalHTML;
+                                    btn.classList.remove('copied');
+                                }, 2000);
+                            }}
+                        >
+                            <span className="copy-icon">📋</span> Copy Link
+                        </button>
+                    </div>
 
                     {/* Chat */}
                     <div className="chat-section">
@@ -1747,14 +1745,14 @@ which is ${payment_ammount}
 
                 {/* Hidden Nav for backward compatibility */}
                 <div style={{ display: 'none' }}>
-                    <MonopolyNav
-                        currentTurn={currentId}
-                        ref={navRef}
-                        name={name}
-                        socket={socket}
-                        players={players}
-                        server={server}
-                        Morgage={{
+                <MonopolyNav
+                    currentTurn={currentId}
+                    ref={navRef}
+                    name={name}
+                    socket={socket}
+                    players={players}
+                    server={server}
+                    Morgage={{
                         onCanc: (a, prpName: string) => {
                             var settings = JSON.parse(decodeURIComponent(CookieManager.get("monopolySettings") as string))[
                                 "monopolySettings"
