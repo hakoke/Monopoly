@@ -10,7 +10,7 @@ import ChacneCard, { ChanceDisplayInfo } from "./specialCards.tsx";
 import { MonopolyCookie, MonopolySettings, GameTrading, MonopolyMode } from "../../assets/types.ts";
 import Slider from "../utils/slider.tsx";
 import { CookieManager } from "../../assets/cookieManager.ts";
-import CSSGridBoard from "./CSSGridBoard.tsx";
+// import CSSGridBoard from "./CSSGridBoard.tsx";
 interface MonopolyGameProps {
     players: Array<Player>;
     myTurn: boolean;
@@ -717,7 +717,7 @@ const MonopolyGame = forwardRef<MonopolyGameRef, MonopolyGameProps>((prop, ref) 
                         className="board"
                         id="locations"
                     >
-                        <CSSGridBoard players={prop.players} clickedOnBoard={prop.clickedOnBoard} />
+                        <img src="/board.png" alt="Monopoly Board" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                         <div id="display-houses">
                             <div
                                 data-position="39"
